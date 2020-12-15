@@ -1,4 +1,5 @@
 const mongoose= require('mongoose')
+const { User } = require('./user')
 
 
 const categorySchema= new mongoose.Schema({
@@ -7,7 +8,7 @@ const categorySchema= new mongoose.Schema({
         required:true
     },
     iconUrl: String,
-    user: mongoose.Types.ObjectId
+    user:{type: mongoose.Types.ObjectId,ref:User}
 },{timestamps:true})
 
 

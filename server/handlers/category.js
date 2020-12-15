@@ -5,13 +5,34 @@ const createCategory= async(req,res,next)=>{
         const {title,iconUrl, }=req.body
         const category= await db.Category.create({title,iconUrl,user:req.user.id})
         const foundCategory= await db.Category.findById(category.id)
-        .populate('user',{name:true,email:true})
-        console.log('happy to be here 🤦‍♂️🤦‍♂️',foundCategory);
+        .populate('user',{email:true,name:true}).exec()
+        console.log('happy to be here 🤦‍♂️🤦‍♂️',foundCategory, req.user);
         return res.status(200).json(foundCategory)
     }catch(err){
         return next(err)
     }
 }
 
+const getAllCategories=  async (req,res,next)=>{
+    try{
+        let foundCategories= await db.Category.find().populate('user',{name:true,email:true})
+        return res.status(200).json(foundCategories)
 
-module.exports={createCategory}
+    }catch(err){
+        console.error("error 🚫👨‍🚫 ", err);    
+        next({status:400, message: "Oops!! Something went wrong"})
+    }
+}
+
+const getCategory= async (req,res,next)=>{
+    try{
+        let foundCategory= await db.Category.findById(req.params.id).populate('user',{name:true,email:true})
+        return res.status(200).json(foundCategory)
+    }catch(err){
+    console.error('error occured') 
+    next({status:400,message:'Oops !! Something went wrong.'})
+    }
+}
+
+
+module.exports={createCategory,getAllCategories,getCategory}

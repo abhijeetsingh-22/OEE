@@ -14,6 +14,9 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    threads:{
+        type:[mongoose.Schema.ObjectId]
     }
 }
 ,{discriminatorKey:'role'})

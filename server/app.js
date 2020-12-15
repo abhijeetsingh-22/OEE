@@ -1,4 +1,6 @@
 require('dotenv').config()
+// import {config} from 'dotenv'
+// config()
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -8,7 +10,7 @@ const {User} =require('./models');
 const authRoutes =require('./routes/auth')
 const {setAuthUser}=require('./middleware/auth')
 const categoryRoutes= require('./routes/category')
-
+const threadRoutes= require('./routes/thread')
 
 const app = express();
 
@@ -22,7 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth',authRoutes)
 app.use(setAuthUser)
-app.use('/api/category',categoryRoutes)
+app.use('/api/categories',categoryRoutes)
+app.use('/api',threadRoutes)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,3 +42,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+// export default app

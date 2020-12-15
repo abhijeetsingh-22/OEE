@@ -31,7 +31,7 @@ isCorrectUser= function(req,res,next){
 
  function setAuthUser(req,res,next){
     try{
-        console.log("checking user login status ❤🤦‍♂️");
+        console.log("checking user login status 🔑🔑");
         if(req.headers.authorization){
             const token=req.headers.authorization.split(' ')[1]
           var decoded=   jwt.verify(token, process.env.TOKEN_SECRET)
