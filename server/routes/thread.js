@@ -10,4 +10,6 @@ router.get('/threads',getAllThreads)
 router.post('/threads',createThread)
 
 router.get('/threads/:threadId',getThread)
+
+// router.put('/threads/:threadId',updateThread)
 module.exports=router

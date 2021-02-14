@@ -10,3 +10,4 @@ mongoose.connect(process.env.MONGO_URI,{ keepAlive: true, useNewUrlParser: true,
 module.exports=require('./user')
 module.exports.Category= require('./category')
 module.exports.Thread=require('./thread')
+module.exports.Post=require('./post')
