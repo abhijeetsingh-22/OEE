@@ -21,14 +21,16 @@ function AuthForm(props) {
   };
 
   return (
-    <div className='container pt-4 '>
-      <div className='row justify-content-md-center '>
-        <div className='col-9  col-md-10 col-lg-7 col-xl-6'>
-          <h2>Login</h2>
+    <div className='container d-flex flex-column justify-content-center  pt-4  my-auto mx-auto min-vh-100'>
+      <div className='row align-items-center justify-content-md-center  '>
+        <div className='col-9  col-md-10 col-lg-7 col-xl-4 bg-light mx-auto p-5 '>
+          <h2 className='text-center'>Login</h2>
           {error.message && <div className='alert alert-danger'>{error.message}</div>}
           <form onSubmit={handleSubmit}>
-            <div className='form-group'>
-              <label htmlFor='email'>Email</label>
+            <div className='mb-3'>
+              <label htmlFor='email' className='form-label'>
+                Email
+              </label>
               <input
                 className='form-control'
                 type='email'
@@ -37,8 +39,10 @@ function AuthForm(props) {
                 onChange={handleChange}
               />
             </div>
-            <div className='form-group'>
-              <label htmlFor='password'>Password</label>
+            <div className='mb-3'>
+              <label htmlFor='password' className='form-label'>
+                Password
+              </label>
               <input
                 className='form-control'
                 type='password'
@@ -47,31 +51,8 @@ function AuthForm(props) {
                 onChange={handleChange}
               />
             </div>
-            {/* {signup && (
-              <>
-                <div className='form-group'>
-                  <label htmlFor='username'>Username</label>
-                  <input
-                    className='form-control'
-                    type='text'
-                    value={username}
-                    name='username'
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='profileImageUrl'>Profile Image Url</label>
-                  <input
-                    className='form-control'
-                    type='text'
-                    value={profileImageUrl}
-                    name='profileImageUrl'
-                    onChange={handleChange}
-                  />
-                </div>
-              </>
-            )} */}
-            <button type='submit' className='btn btn-primary'>
+
+            <button type='submit' className='btn btn-primary col-12 my-3'>
               {/* {buttonText} */}
               Login
             </button>

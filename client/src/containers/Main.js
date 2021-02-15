@@ -10,12 +10,10 @@ function Main(props) {
   // const history = useHistory();
   // if (!currentUser.isAuthenticated) history.push('/signin');
   return (
-    <div>
-      <Switch>
-        <Route exact path='/login' component={AuthForm} />
-        <ProtectedRoute path='/' currentUser={currentUser} component={Dashboard} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route exact path='/login' component={AuthForm} />
+      <ProtectedRoute path='/' currentUser={currentUser} component={Dashboard} />
+    </Switch>
   );
 }
 export default Main;

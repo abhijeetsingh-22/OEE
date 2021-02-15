@@ -9,6 +9,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import {setCurrentUser, setToken} from '../store/actions/auth';
 
+
 const store = configureStore();
 
 function App() {

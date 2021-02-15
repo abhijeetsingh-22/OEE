@@ -10,7 +10,7 @@ function Sidebar() {
       <div className='position-sticky pt-3'>
         <ul className='nav flex-column'>
           <li className='nav-item'>
-            <a className='nav-link active' aria-current='page' href='#'>
+            <Link to='/' className='nav-link active' aria-current='page'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -26,11 +26,11 @@ function Sidebar() {
                 <path d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'></path>
                 <polyline points='9 22 9 12 15 12 15 22'></polyline>
               </svg>
-              <Link to='/'>Dashboard</Link>
-            </a>
+              Dashboard
+            </Link>
           </li>
           <li className='nav-item'>
-            <a className='nav-link' href='#'>
+            <Link to='/forum/categories' className='nav-link'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -46,8 +46,8 @@ function Sidebar() {
                 <path d='M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z'></path>
                 <polyline points='13 2 13 9 20 9'></polyline>
               </svg>
-              <Link to='/forum/categories'>Forum</Link>
-            </a>
+              Forum
+            </Link>
           </li>
           <li className='nav-item'>
             <a className='nav-link' href='#'>

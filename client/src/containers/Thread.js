@@ -98,7 +98,7 @@ const Thread = () => {
       <div className='card'>
         <div className='card-body fw-bold py-3'>
           Your Answer
-          <div class='my-3 d-flex flex-column'>
+          <form class='my-3 d-flex flex-column'>
             {/* <label for='exampleFormControlTextarea1' class='form-label'>
               Example textarea
             </label> */}
@@ -108,14 +108,16 @@ const Thread = () => {
               rows='3'
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
+              required
             ></textarea>
             <button
+              type='submit'
               className='btn btn-primary my-3 align-self-stretch'
               onClick={handleAddAnswer}
             >
               Submit
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

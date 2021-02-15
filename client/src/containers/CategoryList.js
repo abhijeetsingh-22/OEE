@@ -15,26 +15,32 @@ const CategoryList = () => {
   return (
     <div>
       <h2>Categories</h2>
-      {loading
-        ? 'Loading.....'
-        : response.map((data) => {
-            return (
-              <div className='card'>
-                {/* <div className='card-header'>Featured</div> */}
-                <Link to={`/forum/categories/${data._id}`} className='nolinkstyle'>
-                  <div className='card-body'>
-                    <h5 className='card-title'>{data.title}</h5>
-                    {/* <p className='card-text'>
+      {loading ? (
+        <div className='d-flex align-items-center flex-row'>
+          <div class='spinner-border text-primary mx-auto' role='status'>
+            <span class='visually-hidden'>Loading...</span>
+          </div>
+        </div>
+      ) : (
+        response.map((data) => {
+          return (
+            <div className='card'>
+              {/* <div className='card-header'>Featured</div> */}
+              <Link to={`/forum/categories/${data._id}`} className='nolinkstyle'>
+                <div className='card-body'>
+                  <h5 className='card-title'>{data.title}</h5>
+                  {/* <p className='card-text'>
                     With supporting text below as a natural lead-in to additional content.
                   </p> */}
-                    {/* <a href='#' className='btn btn-primary'>
+                  {/* <a href='#' className='btn btn-primary'>
                     Go somewhere
                   </a> */}
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
+                </div>
+              </Link>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 };
