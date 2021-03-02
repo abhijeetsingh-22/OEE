@@ -2,19 +2,17 @@ import React from 'react';
 import {Link, Route} from 'react-router-dom';
 import Category from './Category';
 import CategoryList from './CategoryList';
+import TagList from './TagList';
 import Thread from './Thread';
+import ThreadList from './ThreadList';
 // import './forum.css';
 const Forum = () => {
   return (
-    <div className=''>
-      <div className='d-flex my-1'>
-        <h1 className='col'>Forum</h1>
-        <Link to='/forum/ask' className=' btn btn-primary align-self-center'>
-          ASK A QUESTION
-        </Link>
-      </div>
-      <Route exact path='/forum/categories' component={CategoryList} />
-      <Route exact path='/forum/categories/:categoryId' component={Category} />
+    <div className='mt-3'>
+      <Route exact path='/forum' component={ThreadList} />
+      <Route exact path='/forum/tags' component={TagList} />
+      <Route exact path='/forum/questions/tagged/:tag' component={ThreadList} />
+      {/* <Route exact path='/forum/categories/:categoryId' component={Category} /> */}
       <Route exact path='/forum/threads/:threadId' component={Thread} />
     </div>
   );

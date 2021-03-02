@@ -11,6 +11,7 @@ const {setAuthUser} = require('./middleware/auth');
 const categoryRoutes = require('./routes/category');
 const threadRoutes = require('./routes/thread');
 const postRoutes = require('./routes/post');
+const TagRoutes = require('./routes/tag');
 const cors = require('cors');
 
 const app = express();
@@ -28,7 +29,7 @@ app.use(setAuthUser);
 app.use('/api/forum/categories', categoryRoutes);
 app.use('/api/forum', threadRoutes);
 app.use('/api/forum', postRoutes);
-
+app.use('/api/forum/tags', TagRoutes);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

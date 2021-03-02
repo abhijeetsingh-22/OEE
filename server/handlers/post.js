@@ -5,6 +5,11 @@ const createPost = async (req, res, next) => {
     const {body, thread} = req.body;
     let newPost = await db.Post.create({body, thread, user: req.user.id});
     newPost = await newPost.populate('user', 'name').execPopulate();
+
+    await db.Thread.findOneAndUpdate(
+      {_id: newPost.thread},
+      {$push: {posts: newPost._id}}
+    );
     return res.status(200).json(newPost);
   } catch (err) {
     console.error('error occured');
