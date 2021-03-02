@@ -12,7 +12,8 @@ const threadSchema = new mongoose.Schema(
     },
     user: {type: mongoose.Types.ObjectId, ref: 'user'},
     category: {type: mongoose.Schema.ObjectId, ref: 'category'},
-    posts: {type: mongoose.Schema.ObjectId, ref: 'post'},
+    tags: [{type: mongoose.Schema.ObjectId, ref: 'tag'}],
+    posts: [{type: mongoose.Schema.ObjectId, ref: 'post'}],
   },
   {timestamps: true}
 );

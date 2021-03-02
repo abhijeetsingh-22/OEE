@@ -30,7 +30,7 @@ export function setAuthUser(type, userData) {
     } catch (error) {
       console.error('error occured');
       dispatch(addError(error.message));
-      throw new Error();
+      // throw new Error();
     }
   };
 }

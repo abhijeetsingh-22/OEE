@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {apiCall} from '../services/api';
 import Moment from 'react-moment';
 import moment from 'moment';
@@ -16,6 +16,7 @@ const Thread = () => {
       const thread = await apiCall('get', `/api/forum/threads/${threadId}`);
       console.log(thread);
       setThread(thread);
+      // setPosts(thread.posts);
       const res = await apiCall('get', `/api/forum/threads/${threadId}/posts`);
       console.log(res);
       setPosts(res);
@@ -23,14 +24,15 @@ const Thread = () => {
     })();
   }, []);
   const handleAddAnswer = (e) => {
+    e.preventDefault();
     console.log(answer);
     apiCall('post', '/api/forum/posts', {
       body: answer,
       thread: thread._id,
     })
       .then((res) => {
-        setPosts((posts) => [...posts, res]);
         setAnswer('');
+        setPosts((posts) => [...posts, res]);
       })
       .catch((err) => console.log('error occured ', err));
   };
@@ -57,11 +59,23 @@ const Thread = () => {
                 <Moment format='DD MMM YYYY hh:mm:A'>{thread.createdAt}</Moment>
               )}
             </small>
+            <Link to='/forum/ask' className=' btn btn-primary align-self-center ms-auto'>
+              ASK A QUESTION
+            </Link>
           </div>
           <h5 className='card-title fw-bold mt-1 fs-5'>{thread.title}</h5>
           {/* <h5 class="card-title">Special title treatment</h5> */}
           <p class='card-text mt-0'>{thread.body}</p>
           {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
+          <div className='d-flex '>
+            {thread.tags.map((tag) => {
+              return (
+                <Link to={`/forum/questions/tagged/${tag.title}`}>
+                  <span className='badge bg-secondary me-2'>{tag.title}</span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
       <div className='card'>
@@ -73,12 +87,15 @@ const Thread = () => {
         return (
           <div class='card' key={post._id}>
             <div class='card-body '>
-              <div className='d-flex align-items-center justify-content-start flex-wrap'>
+              <div className='d-flex align-items-center justify-content-start gx- flex-wrap'>
                 <p class='card-title me-3 my-auto fw-bold text-primary'>
                   {post.user.name}
                 </p>
                 {thread.user._id == post.user._id ? (
-                  <span className='badge bg-primary'>Author</span>
+                  <span className='badge bg-primary mx-1'>Author</span>
+                ) : null}
+                {post.user.role == 'staff' ? (
+                  <span className='badge bg-success'>Faculty</span>
                 ) : null}
               </div>
               <small className='text-muted mt-n1'>
