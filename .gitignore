@@ -1,4 +1,4 @@
-.env
+server/.env
 node_modules
 .eslintcache
 .env.development
