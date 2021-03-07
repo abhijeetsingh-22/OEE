@@ -34,7 +34,8 @@ const get = async (req, res, next) => {
 
 const done = async (req, res, next) => {
   try {
-    if (req.query.code !== config.judge.secret) {
+    console.log('the secret code is', req.query.code);
+    if (req.query.code !== config.judge.apiKey) {
       return res.sendSatus(403);
     }
     const {id, code, stderr, stdout, time} = req.body;

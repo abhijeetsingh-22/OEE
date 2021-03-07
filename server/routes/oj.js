@@ -5,5 +5,5 @@ const submission = require('../handlers/oj');
 
 router.post('/run', submission.post);
 router.get('/:submissionId', submission.get);
-router.post('/cb', submission.done);
+// router.post('/cb', submission.done);
 module.exports = router;

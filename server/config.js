@@ -6,6 +6,6 @@ module.exports = {
   },
   api: {
     //own address to send as cb to judge api
-    apiBase: process.env.API || 'localhost:3000',
+    apiBase: process.env.API || 'http://localhost:3000',
   },
 };

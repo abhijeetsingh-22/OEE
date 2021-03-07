@@ -15,7 +15,7 @@ const runCode = ({source, lang, input}) => {
       lang,
       stdin: input,
       mode: 'callback',
-      callback: config.api.apiBase + '/run/cb?code' + config.judge.apiKey,
+      callback: config.api.apiBase + '/api/oj/run/cb?code=' + config.judge.apiKey,
     },
   });
 };

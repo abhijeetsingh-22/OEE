@@ -13,6 +13,7 @@ const postRoutes = require('./routes/post');
 const TagRoutes = require('./routes/tag');
 const ojRoutes = require('./routes/oj');
 const cors = require('cors');
+const submission = require('./handlers/oj');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get('/test', (req, res) => {
   res.send('welcome to oee server');
 });
 app.use('/api/auth', authRoutes);
+app.post('/api/oj/run/cb', submission.done);
 app.use(setAuthUser);
 app.use('/api/forum/categories', categoryRoutes);
 app.use('/api/forum', threadRoutes);
