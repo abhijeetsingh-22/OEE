@@ -11,3 +11,4 @@ module.exports.Category = require('./category');
 module.exports.Thread = require('./thread');
 module.exports.Post = require('./post');
 module.exports.Tag = require('./tag');
+module.exports.Submission = require('./submission');

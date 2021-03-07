@@ -5,13 +5,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const {User} = require('./models');
 const authRoutes = require('./routes/auth');
 const {setAuthUser} = require('./middleware/auth');
 const categoryRoutes = require('./routes/category');
 const threadRoutes = require('./routes/thread');
 const postRoutes = require('./routes/post');
 const TagRoutes = require('./routes/tag');
+const ojRoutes = require('./routes/oj');
 const cors = require('cors');
 
 const app = express();
@@ -33,6 +33,7 @@ app.use('/api/forum/categories', categoryRoutes);
 app.use('/api/forum', threadRoutes);
 app.use('/api/forum', postRoutes);
 app.use('/api/forum/tags', TagRoutes);
+app.use('/api/oj', ojRoutes);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
