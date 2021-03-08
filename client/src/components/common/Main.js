@@ -1,8 +1,8 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
 import {Link, Switch, Route, withRouter, useHistory} from 'react-router-dom';
-import AuthForm from '../components/AuthForm';
-import ProtectedRoute from '../hocs/ProtectedRoute';
+import AuthForm from './AuthForm';
+import ProtectedRoute from '../../hocs/ProtectedRoute';
 import Dashboard from './Dashboard';
 
 function Main(props) {

@@ -1,10 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import {Switch, Route} from 'react-router-dom';
-import Forum from './Forum';
-import ProtectedRoute from '../hocs/ProtectedRoute';
-import AddQuestionForm from './AddQuestionForm';
+import Forum from '../forum';
+import ProtectedRoute from '../../hocs/ProtectedRoute';
+import AddQuestionForm from '../forum/AddQuestionForm';
 const Dashboard = () => {
   return (
     <>

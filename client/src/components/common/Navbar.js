@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {logout} from '../store/actions/auth';
-import {capitalize} from '../utils';
+import {logout} from '../../store/actions/auth';
+import {capitalize} from '../../utils';
 // import logo from '../assets/logo-new.svg';
 function Navbar() {
   const dispatch = useDispatch();

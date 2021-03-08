@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {apiCall} from '../services/api';
+import {apiCall} from '../../services/api';
 import Moment from 'react-moment';
 import moment from 'moment';
 

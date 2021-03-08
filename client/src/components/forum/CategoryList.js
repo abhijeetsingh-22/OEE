@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {apiCall} from '../services/api';
+import {apiCall} from '../../services/api';
 import {Link} from 'react-router-dom';
 const CategoryList = () => {
   const [loading, setLoading] = useState(false);
