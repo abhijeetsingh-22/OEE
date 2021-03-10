@@ -20,7 +20,7 @@ const runCode = ({source, lang, input}) => {
   });
 };
 const getLangs = () => {
-  rp({
+  return rp({
     uri: uri('/langs'),
     json: true,
     headers: {

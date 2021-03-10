@@ -190,6 +190,7 @@ a.nolinkstyle:hover {
   cursor: pointer;
   background: none;
 }
+/*======== STYLE FOR CODE EDITOR ======== */
 
 #editor {
   overflow: hidden;
@@ -201,4 +202,199 @@ a.nolinkstyle:hover {
   margin: 0;
   border-radius: 0;
   padding-top: 0 !important;
+}
+
+input.black {
+  border: none;
+  color: whitesmoke;
+  border-bottom: 1px solid white;
+  background: #202020;
+  font-family: sans-serif;
+  font-weight: 100;
+}
+
+.panel-heading {
+  text-align: left !important;
+}
+
+#inoutbox {
+  /* position: fixed; */
+  /* width: 100vw; */
+  /* height: calc(30vh + 30px); */
+  /* bottom: 20px; */
+  /* left: 0; */
+  z-index: 10;
+  background: #202020;
+}
+
+#output,
+#test-input {
+  /* width: calc(50vw - 7px); */
+  /* border-radius: 0 !important; */
+  /* margin: 0; */
+  /* height: calc(100% - 50px); */
+  /* overflow: auto; */
+  background: #202020 !important;
+  border: none;
+  /* border-right: 1px solid #272727; */
+  color: white !important;
+}
+
+#test-input,
+#output {
+  resize: none;
+  padding: 6px;
+  min-height: 150px;
+}
+
+#test-input:focus {
+  outline: none;
+}
+test-in .panel-heading,
+.panel-input,
+.panel-output {
+  /* width: calc(50vw - 7px); */
+  border-radius: 0;
+  margin: 0;
+}
+
+.panel-heading {
+  /* display: flex;
+  align-items: center; */
+  /* height: 50px !important; */
+  /* padding: 8px 15px; */
+  background: #272727;
+  color: #fff;
+}
+
+.panel-input,
+.panel-output {
+  /* position: absolute; */
+  /* bottom: 0; */
+  /* display: inline-block;
+  height: 100% !important; */
+  border-color: #202020;
+}
+
+.panel-output {
+  /* right: 14px; */
+}
+
+#toggleVerticalPane {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  #toggleHorizontalPane {
+    display: none;
+  }
+
+  .panel-heading,
+  .panel-input,
+  .panel-output,
+  #output,
+  #test-input {
+    width: calc(100vw - 14px);
+  }
+
+  .panel-input,
+  .panel-output {
+    position: static;
+    height: 50% !important;
+    border-color: #202020;
+  }
+}
+
+@media (min-width: 767px) {
+  #toggleVerticalPane {
+    display: inline-block;
+  }
+
+  .verticalPane#inoutbox {
+    height: calc(100vh - 70px) !important;
+    width: 100vw;
+    position: relative;
+    right: 0;
+    left: 5px;
+    top: calc(-100vh + 65px);
+    z-index: 9;
+    left: 5px;
+  }
+
+  .verticalPane #output,
+  .verticalPane #test-input {
+    width: calc(40vw - 5px);
+  }
+
+  .verticalPane .panel-heading,
+  .verticalPane .panel-input,
+  .verticalPane .panel-output {
+    width: calc(40vw + 4px);
+  }
+
+  .verticalPane .panel-input,
+  .verticalPane .panel-output {
+    bottom: auto;
+    top: 0;
+    right: 0;
+    height: 50% !important;
+  }
+
+  .verticalPane .panel-output {
+    top: auto;
+    bottom: 0;
+  }
+}
+
+@media (min-width: 1375px) {
+  .verticalPane#inoutbox {
+    max-width: 550px;
+    left: calc(100vw - 550px);
+    bottom: 0px;
+  }
+  .verticalPane #output,
+  .verticalPane #test-input {
+    width: 100%;
+  }
+  .verticalPane .panel-heading,
+  .verticalPane .panel-input,
+  .verticalPane .panel-output {
+    width: 100%;
+  }
+}
+
+i.fa:hover {
+  cursor: pointer;
+  color: red;
+}
+i.fa:focus {
+  color: red;
+}
+span.fa:hover {
+  cursor: pointer;
+  color: red;
+}
+span.fa:focus {
+  color: red;
+}
+
+.open > .dropdown-menu {
+  display: list-item !important;
+  background-color: #202020;
+  font-size: 14px;
+  overflow: hidden;
+  top: 35px;
+  right: 25px;
+  left: auto;
+  width: 180px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#uploadInputFile {
+  margin: 0px 0px 0px auto;
+  padding: 0 10px;
+  cursor: pointer;
+}
+#downloadOutput {
+  margin-left: auto;
 }

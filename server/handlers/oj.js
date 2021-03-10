@@ -2,7 +2,7 @@ const db = require('../models');
 const config = require('../config');
 const services = require('../services/oj/');
 
-const post = async (req, res, next) => {
+const runCode = async (req, res, next) => {
   try {
     const {source, lang, input} = req.body;
     console.log('inside run post😀😀😀😀');
@@ -20,7 +20,7 @@ const post = async (req, res, next) => {
     next({status: 400, message: 'Oops !! Something went wrong.'});
   }
 };
-const get = async (req, res, next) => {
+const getSubId = async (req, res, next) => {
   try {
     const submission = await db.Submission.findOne({judgeId: req.params.submissionId});
     if (!submission)
@@ -52,4 +52,15 @@ const done = async (req, res, next) => {
     next({status: 400, message: 'Oops !! Something went wrong.'});
   }
 };
-module.exports = {post, get, done};
+const fetchLangs = async (req, res) => {
+  try {
+    const langs = await services.getLangs();
+    if (langs) {
+      return res.status(200).json(langs);
+    }
+  } catch (err) {
+    console.error('error occured');
+    next({status: 400, message: 'Oops !! Something went wrong.'});
+  }
+};
+module.exports = {runCode, getSubId, done, fetchLangs};
