@@ -14,6 +14,7 @@ const TagRoutes = require('./routes/tag');
 const ojRoutes = require('./routes/oj');
 const cors = require('cors');
 const submission = require('./handlers/oj');
+const evaluationRoutes = require('./routes/evaluation');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/forum', threadRoutes);
 app.use('/api/forum', postRoutes);
 app.use('/api/forum/tags', TagRoutes);
 app.use('/api/oj', ojRoutes);
+app.use('/api/evaluation', evaluationRoutes);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -53,4 +55,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
-// export default app
