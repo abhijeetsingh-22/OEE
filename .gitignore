@@ -2,3 +2,4 @@ server/.env
 node_modules
 .eslintcache
 .env.development
+jsconfig.json
