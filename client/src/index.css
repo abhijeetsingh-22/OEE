@@ -407,3 +407,9 @@ span.fa:focus {
 	height: 200px;
 	overflow: inherit;
 } */
+
+.code-modal {
+	font-family: 'Ubuntu Mono';
+	text-decoration: none;
+	text-align: left;
+}

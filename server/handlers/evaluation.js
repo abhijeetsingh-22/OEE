@@ -204,6 +204,86 @@ const runTestcasesCb = async (req, res, next) => {
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
+const submitAnswer = async (req, res, next) => {
+	try {
+		const question = await db.Question.findById(req.params.questionId, 'type testcases').populate(
+			'testcases',
+			'id input output',
+			'testcase'
+		)
+		console.log(question)
+		if (question && question.type === 'code') {
+			const {source, lang} = req.body
+
+			const {id} = await services.submitAnswer({source, lang, testcases: question.testcases})
+			const submission = await db.Submission.create({
+				judgeId: id,
+				source,
+				lang,
+				user: req.user && req.user.id,
+				question: question.id,
+			})
+			return res.status(200).json({id: submission.id})
+		}
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
+const submitCb = async (req, res, next) => {
+	try {
+		console.log('the secret code is', req.query.code)
+		console.log('inside submit cb', req.body)
+		if (req.query.code !== config.judge.apiKey) {
+			return res.sendSatus(403)
+		}
+
+		const {id, code, stderr, testcases} = req.body
+		const score = testcases && testcases.reduce((acc, cur) => acc + cur.score, 0) / testcases.length
+		const time =
+			testcases &&
+			testcases.reduce((acc, cur) => {
+				if (cur.score !== 0) return Math.max(acc, cur)
+				else return acc
+			}, 0)
+		console.log('the score is ', score)
+		const topSub = db.Submission.find({})
+		// // const output = {id, code, stderr, , time}
+		const updatedSubmission = await db.Submission.findOneAndUpdate(
+			{judgeId: id, isCompleted: false},
+			{isCompleted: true, isSuccessful: !stderr, results: testcases, score, time}
+		)
+		if (!updatedSubmission) return res.status(404).send({error: {message: 'submission not found'}})
+		return res.send({success: true})
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
+const getSubmission = async (req, res, next) => {
+	try {
+		const submission = await db.Submission.findById(req.params.submissionId)
+		if (!submission) return res.status(400).send({error: {message: 'submission not found'}})
+		return res.send(submission)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
+const getAllSubmissions = async (req, res, next) => {
+	try {
+		console.log('inside getallsubmission 😋😋')
+		const submissions = await db.Submission.find({
+			question: req.params.questionId,
+			user: req.user && req.user.id,
+		}).sort({createdAt: -1})
+		if (submissions) return res.status(200).json(submissions)
+		else return res.status(404).json({error: {message: 'Not found'}})
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
 module.exports = {
 	createEvaluation,
 	getAllEvaluations,
@@ -216,4 +296,8 @@ module.exports = {
 	updateQuestion,
 	runTestcases,
 	runTestcasesCb,
+	submitAnswer,
+	submitCb,
+	getSubmission,
+	getAllSubmissions,
 }

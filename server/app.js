@@ -13,8 +13,8 @@ const postRoutes = require('./routes/post')
 const TagRoutes = require('./routes/tag')
 const ojRoutes = require('./routes/oj')
 const cors = require('cors')
-const submission = require('./handlers/oj')
-const {runTestcasesCb} = require('./handlers/evaluation')
+const runSubmission = require('./handlers/oj')
+const {runTestcasesCb, submitCb} = require('./handlers/evaluation')
 const evaluationRoutes = require('./routes/evaluation')
 
 const app = express()
@@ -31,8 +31,9 @@ app.get('/test', (req, res) => {
 	res.send('welcome to oee server')
 })
 app.use('/api/auth', authRoutes)
-app.post('/api/oj/run/cb', submission.done) // seprated from oj routes to make accessible with OJ api key
+app.post('/api/oj/run/cb', runSubmission.done) // seprated from oj routes to make accessible with OJ api key
 app.post('/api/oj/runtestcases/cb', runTestcasesCb)
+app.post('/api/oj/submit/cb', submitCb)
 app.use(setAuthUser)
 app.use('/api/forum/categories', categoryRoutes)
 app.use('/api/forum', threadRoutes)

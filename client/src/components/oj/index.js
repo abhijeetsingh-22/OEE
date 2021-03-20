@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Editor from './Editor'
 import InOutBox from './InOutBox'
 import base64 from 'base-64'
 import {apiCall} from '../../services/api'
-import {setCodeId, setOutput} from '../../store/actions/editor'
+import {setCodeId, setLanguages, setOutput} from '../../store/actions/editor'
 import {useDispatch, useSelector} from 'react-redux'
 import {getLanguage, getLanguages, getCode, getInput} from '../../store/selectors/editor'
 
@@ -15,6 +15,24 @@ function PlayGround() {
 	const input = useSelector(getInput)
 
 	const code = useSelector(getCode)
+	useEffect(() => {
+		const fetch = async () => {
+			try {
+				const d = await apiCall('get', '/api/oj/langs')
+				if (d) {
+					dispatch(
+						setLanguages(
+							d.reduce((langs, lang) => {
+								langs[lang.langCode] = lang
+								return langs
+							}, {})
+						)
+					)
+				}
+			} catch (error) {}
+		}
+		fetch()
+	}, [])
 	const handleCodeRun = (e) => {
 		e.preventDefault()
 		// console.log(base64.encode(code));
@@ -49,7 +67,7 @@ function PlayGround() {
 	}
 	return (
 		<div>
-			<Editor handleSubmit={handleCodeRun} loading={loading} />
+			<Editor handleRun={handleCodeRun} loading={loading} />
 			<InOutBox />
 		</div>
 	)

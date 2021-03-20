@@ -14,7 +14,7 @@ import InOutBox from './InOutBox'
 import {apiCall} from '../../services/api'
 import base64 from 'base-64'
 
-function Editor({handleSubmit, loading}) {
+function Editor({handleRun, loading, showRunBtn}) {
 	const dispatch = useDispatch()
 	const theme = useSelector(getTheme)
 	const language = useSelector(getLanguage)
@@ -31,20 +31,22 @@ function Editor({handleSubmit, loading}) {
 	subIdRef.current = subId
 
 	useEffect(() => {
-		const fetch = async () => {
-			const data = await apiCall('get', '/api/oj/langs')
-			if (data) {
-				dispatch(
-					setLanguages(
-						data.reduce((langs, lang) => {
-							langs[lang.langCode] = lang
-							return langs
-						}, {})
-					)
-				)
-			}
-		}
-		fetch()
+		// const fetch = async () => {
+		// 	try {
+		// 		const data = await apiCall('get', '/api/oj/langs')
+		// 		if (data) {
+		// 			dispatch(
+		// 				setLanguages(
+		// 					data.reduce((langs, lang) => {
+		// 						langs[lang.langCode] = lang
+		// 						return langs
+		// 					}, {})
+		// 				)
+		// 			)
+		// 		}
+		// 	} catch (error) {}
+		// }
+		// fetch()
 		if (editorRef) {
 			setEditor(
 				monaco.editor.create(editorRef.current, {
@@ -88,12 +90,14 @@ function Editor({handleSubmit, loading}) {
 	return (
 		<div ref={containerRef}>
 			<div className='d-flex my-1 '>
-				<button className='btn btn-sm btn-danger ' onClick={handleSubmit} disabled={loading}>
-					{!loading ? 'Run' : 'Running'}
-				</button>
+				{showRunBtn && (
+					<button className='btn btn-sm btn-danger me-1' onClick={handleRun} disabled={loading}>
+						{!loading ? 'Run' : 'Running'}
+					</button>
+				)}
 				<div className='dropdown'>
 					<button
-						className='btn btn-sm btn-secondary dropdown-toggle ms-1'
+						className='btn btn-sm btn-secondary dropdown-toggle '
 						type='button'
 						id='selectCodeLanguageBtn'
 						data-bs-toggle='dropdown'
@@ -119,6 +123,17 @@ function Editor({handleSubmit, loading}) {
 			</div>
 			<div id='editor' className='' ref={editorRef}></div>
 			{/* <InOutBox /> */}
+
+			{/* {!isToolbarOnTop && (
+				<div className='my-3 d-flex justify-content-end'>
+					<button className='btn btn-sm btn-danger me-1' onClick={handleRun} disabled={loading}>
+						{!loading ? 'Run' : 'Running'}
+					</button>
+					<button className='btn btn-sm btn-success me-1' onClick={handleSubmit} disabled={loading}>
+						{!loading ? 'Submit' : 'Submission Queued'}
+					</button>
+				</div>
+			)} */}
 		</div>
 	)
 }

@@ -163,17 +163,25 @@ function AddQuestion() {
 				<label htmlFor='questionCode' className='form-label'>
 					Solution Code
 				</label>
-				<Editor handleSubmit={handleCodeRun} loading={loading} />
+				<Editor handleRun={handleCodeRun} loading={loading} isToolbarOnTop={false} />
 			</div>
 			<div className='col-md-10 d-flex justify-content-center my-4 '>
+				{/* <div className='my-3 d-flex justify-content-end'> */}
+				<button
+					className='btn btn-sm btn-danger me-1 col-2'
+					onClick={handleCodeRun}
+					disabled={loading}
+				>
+					{!loading ? 'Run' : 'Running'}
+				</button>
 				<span
-					className='col-4'
+					className='col-2'
 					data-bs-toggle='tooltip'
 					data-bs-placement='top'
 					title='Please run code and verify testcases output before submitting'
 				>
 					<button
-						className='btn btn-primary w-100 '
+						className='btn btn-sm btn-success w-100 '
 						disabled={isTestcaseChanged}
 						onClick={handleSubmit}
 					>

@@ -11,6 +11,9 @@ const {
 	getQuestion,
 	runTestcases,
 	runTestcasesCb,
+	submitAnswer,
+	getSubmission,
+	getAllSubmissions,
 } = require('../handlers/evaluation')
 const {isStaffUser} = require('../middleware/auth')
 
@@ -32,5 +35,15 @@ router.post('/runtestcases/cb', runTestcasesCb)
 //get question by evaluationId and order
 router.get('/:evaluationId', getAllQuestions)
 router.get('/questions/:questionId', getQuestion)
+
+// route to submit the answer of the questions
+router.post('/questions/:questionId', submitAnswer)
+
+//get submission by id
+router.get('/submissions/:submissionId', getSubmission)
+//get all for a question
+router.get('/questions/:questionId/submissions', getAllSubmissions)
+
+// router.post('/questions/:questionId', submitAnswer)
 
 module.exports = router

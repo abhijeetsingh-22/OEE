@@ -34,6 +34,21 @@ const getTestcasesOutput = ({source, lang, testcases}) => {
 		},
 	})
 }
+const submitAnswer = ({source, lang, testcases}) => {
+	return rp({
+		method: 'POST',
+		uri: uri('/submit'),
+		json: true,
+		headers: {Authorization: `Bearer ${config.judge.apiKey}`},
+		body: {
+			source,
+			lang,
+			testcases,
+			mode: 'callback',
+			callback: config.api.apiBase + '/api/oj/submit/cb?code=' + config.judge.apiKey,
+		},
+	})
+}
 const getLangs = () => {
 	return rp({
 		uri: uri('/langs'),
@@ -43,4 +58,4 @@ const getLangs = () => {
 		},
 	})
 }
-module.exports = {runCode, getLangs, getTestcasesOutput}
+module.exports = {runCode, getLangs, getTestcasesOutput, submitAnswer}
