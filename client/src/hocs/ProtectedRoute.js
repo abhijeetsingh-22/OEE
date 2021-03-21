@@ -5,10 +5,11 @@ const ProtectedRoute = ({component: Component, role, currentUser, ...rest}) => {
 		<Route
 			{...rest}
 			render={(props) => {
-				if (!!role && currentUser.isAuthenticated)
-					if (currentUser.role === role) return <Component {...props} />
+				if (!!role && currentUser.isAuthenticated) {
+					// console.log('user', currentUser, 'role', role)
+					if (currentUser.user.role === role) return <Component {...props} />
 					else return <Redirect to='/' />
-				else
+				} else
 					return currentUser.isAuthenticated ? <Component {...props} /> : <Redirect to='/login' />
 			}}
 		/>

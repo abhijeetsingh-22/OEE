@@ -6,17 +6,22 @@ import {Link} from 'react-router-dom'
 import ProtectedRoute from '../../hocs/ProtectedRoute'
 import {apiCall} from '../../services/api'
 import {getCurrentUser} from '../../store/selectors/user'
+import Spinner from '../common/Spinner'
 
 function QuestionList() {
 	const {evaluationId} = useParams()
 	const {path, url} = useRouteMatch()
 	const [questions, setQuestions] = useState([])
 	const currentUser = useSelector(getCurrentUser)
+	const [loading, setLoading] = useState(true)
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await apiCall('get', `/api/evaluation/${evaluationId}`)
 			console.log(data)
-			setQuestions(data)
+			if (!data.error) {
+				setQuestions(data)
+				setLoading(false)
+			}
 		}
 		fetchData()
 	}, [evaluationId])
@@ -70,6 +75,7 @@ function QuestionList() {
 			</div>
 		)
 	})
+	if (loading) return <Spinner />
 	return (
 		<div>
 			<div className='px-2 mb-2 d-flex justify-content-between'>

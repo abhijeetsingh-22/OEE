@@ -4,15 +4,21 @@ import {useSelector} from 'react-redux'
 import {Link, useRouteMatch} from 'react-router-dom'
 import {apiCall} from '../../services/api'
 import {getCurrentUser} from '../../store/selectors/user'
+import Spinner from '../common/Spinner'
 function EvaluationsList() {
 	const {path, url} = useRouteMatch()
 	console.log(path, url)
 	const [evaluations, setEvaluations] = useState([])
+	const [loading, setLoading] = useState(true)
 	const currentUser = useSelector(getCurrentUser)
+
 	useEffect(() => {
 		const fetch = async () => {
 			const res = await apiCall('get', '/api/evaluation')
-			setEvaluations(res)
+			if (!res.error) {
+				setEvaluations(res)
+				setLoading(false)
+			}
 		}
 		fetch()
 		return () => {}
@@ -51,6 +57,7 @@ function EvaluationsList() {
 			</div>
 		)
 	})
+	if (loading) return <Spinner />
 	return (
 		<div className=''>
 			<div className='d-flex justify-content-between mb-2 p-1'>

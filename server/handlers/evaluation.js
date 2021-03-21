@@ -49,8 +49,8 @@ const getAllQuestions = async (req, res, next) => {
 const getQuestion = async (req, res, next) => {
 	try {
 		const foundQuestion = await db.Question.findById(req.params.questionId, {
-			testcases: false,
-		})
+			source: false,
+		}).populate('testcases', '', 'testcase', {isPublic: true})
 		return res.status(200).json(foundQuestion)
 	} catch (err) {
 		console.error(err)
@@ -211,6 +211,7 @@ const submitAnswer = async (req, res, next) => {
 			'id input output',
 			'testcase'
 		)
+		console.log(question.endTime)
 		console.log(question)
 		if (question && question.type === 'code') {
 			const {source, lang} = req.body

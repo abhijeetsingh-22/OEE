@@ -6,6 +6,7 @@ import {apiCall} from '../../services/api'
 import {setLanguages} from '../../store/actions/editor'
 import {getLanguages} from '../../store/selectors/editor'
 import {getCurrentUser} from '../../store/selectors/user'
+import Spinner from '../common/Spinner'
 import ViewSolutionModal from './ViewSolutionModal'
 
 function SubmissionResultList() {
@@ -15,12 +16,16 @@ function SubmissionResultList() {
 	const currentUser = useSelector(getCurrentUser)
 	const [source, setSource] = useState('')
 	const [showModal, setShowModal] = useState(false)
+	const [loading, setLoading] = useState(true)
 	console.log(languages)
 	useEffect(() => {
 		const fetch = async () => {
 			try {
 				const data = await apiCall('get', `/api/evaluation/questions/${questionId}/submissions`)
-				if (!data.error) setResults(data)
+				if (!data.error) {
+					setResults(data)
+					setLoading(false)
+				}
 			} catch (error) {}
 		}
 		fetch()
@@ -57,6 +62,7 @@ function SubmissionResultList() {
 			</tr>
 		)
 	})
+	if (loading) return <Spinner />
 
 	return (
 		<div>

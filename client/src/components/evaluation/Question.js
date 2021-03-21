@@ -9,6 +9,8 @@ import {useDispatch, useSelector} from 'react-redux'
 import {getCode, getInput, getLanguage} from '../../store/selectors/editor'
 import {setOutput} from '../../store/actions/editor'
 import SubmissionResult from './SubmissionResult'
+import 'react-quill/dist/quill.snow.css'
+import Spinner from '../common/Spinner'
 
 function Question() {
 	const [question, setQuestion] = useState({})
@@ -20,12 +22,14 @@ function Question() {
 	const language = useSelector(getLanguage)
 	const code = useSelector(getCode)
 	const input = useSelector(getInput)
+	const [loading, setLoading] = useState(true)
 	const dispatch = useDispatch()
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const data = await apiCall('get', `/api/evaluation/questions/${questionId}`)
 				setQuestion(data)
+				setLoading(false)
 			} catch (err) {
 				console.log('error')
 			}
@@ -98,6 +102,21 @@ function Question() {
 			return poll()
 		})
 	}
+	const exampleTestcaseView = question?.testcases?.map((t) => {
+		return (
+			<div className='my-3'>
+				<h6>Sample Input</h6>
+				<pre className='bg-dark text-white p-2 ps-3'>
+					{Buffer.from(t.input, 'base64').toString('ascii')}
+				</pre>
+				<h6>Sample Output</h6>
+				<pre className='bg-dark text-white p-2 ps-3'>
+					{Buffer.from(t.output, 'base64').toString('ascii')}
+				</pre>
+			</div>
+		)
+	})
+	if (loading) return <Spinner />
 
 	return (
 		<div>
@@ -128,7 +147,10 @@ function Question() {
 						</div>
 						{/* <h5 className="card-title">Special title treatment</h5> */}
 						{/* <p className='card-text mt-0' >{question.bodyHTML}</p> */}
-						<div dangerouslySetInnerHTML={{__html: question.bodyHTML}}></div>
+						<div
+							dangerouslySetInnerHTML={{__html: question.bodyHTML}}
+							className='ql-editor p-0'
+						></div>
 						{/* <a href="#" className="btn btn-primary">Go somewhere</a> */}
 						<div className='d-flex '>
 							{/* {thread.tags.map((tag) => {
@@ -139,6 +161,7 @@ function Question() {
 							);
 						})} */}
 						</div>
+						{exampleTestcaseView}
 					</div>
 				</div>
 			</div>
