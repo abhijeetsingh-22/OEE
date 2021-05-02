@@ -67,7 +67,7 @@ function PlayGround() {
 	}
 	return (
 		<div>
-			<Editor handleRun={handleCodeRun} loading={loading} />
+			<Editor handleRun={handleCodeRun} loading={loading} showRunBtn={true} />
 			<InOutBox />
 		</div>
 	)

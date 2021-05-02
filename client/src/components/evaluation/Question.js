@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {useParams, useRouteMatch} from 'react-router'
+import {useHistory, useParams, useRouteMatch} from 'react-router'
 import {Link} from 'react-router-dom'
 import {apiCall} from '../../services/api'
 import Editor from '../oj/Editor'
@@ -24,6 +24,7 @@ function Question() {
 	const input = useSelector(getInput)
 	const [loading, setLoading] = useState(true)
 	const dispatch = useDispatch()
+	const history = useHistory()
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -75,32 +76,38 @@ function Question() {
 			source: base64.encode(code),
 			lang: language,
 			// input: base64.encode(input),
-		}).then((res) => {
-			console.log(res)
-			const start = new Date()
-			// dispatch(setCodeId(res.id))
-
-			const poll = async () => {
-				const data = await apiCall('get', `/api/evaluation/submissions/${res.id}`)
-
-				//check for 20sec
-				if (!data.isCompleted && new Date() - start <= 20 * 1000)
-					return new Promise((resolve) => setTimeout(() => resolve(poll()), 1000))
-				setIsRunning(false)
-				if (data.isCompleted) {
-					console.log(data)
-					setResult(data)
-
-					// dispatch(setOutput(data.results.stdout))
-					// containerRef.current.scrollIntoView({
-					// 	behavior: 'smooth',
-					// 	block: 'end',
-					// 	inline: 'nearest',
-					// })
-				}
-			}
-			return poll()
 		})
+			.then((res) => {
+				console.log(res)
+				const start = new Date()
+				// dispatch(setCodeId(res.id))
+
+				const poll = async () => {
+					const data = await apiCall('get', `/api/evaluation/submissions/${res.id}`)
+
+					//check for 20sec
+					if (!data.isCompleted && new Date() - start <= 20 * 1000)
+						return new Promise((resolve) => setTimeout(() => resolve(poll()), 1000))
+					setIsRunning(false)
+					if (data.isCompleted) {
+						console.log(data)
+						setResult(data)
+
+						// dispatch(setOutput(data.results.stdout))
+						// containerRef.current.scrollIntoView({
+						// 	behavior: 'smooth',
+						// 	block: 'end',
+						// 	inline: 'nearest',
+						// })
+					}
+				}
+				return poll()
+			})
+			.catch((err) => {
+				setTimeout(() => {
+					history.push('/evaluations')
+				}, 500)
+			})
 	}
 	const exampleTestcaseView = question?.testcases?.map((t) => {
 		return (

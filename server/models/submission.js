@@ -20,7 +20,7 @@ const submissionSchema = new mongoose.Schema(
 submissionSchema.pre('findOneAndUpdate', async function (err) {
 	const docToUpdate = await this.model.findOne(this.getQuery())
 	const topSub = await db.Submission.findOne(
-		{isTopSubmission: true, user: docToUpdate.user},
+		{isTopSubmission: true, user: docToUpdate.user,question:docToUpdate.question},
 		'score'
 	)
 	var isTopSubmission = true

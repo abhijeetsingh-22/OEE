@@ -7,6 +7,7 @@ import {setLanguages} from '../../store/actions/editor'
 import {getCurrentUser} from '../../store/selectors/user'
 import AddEvaluation from './AddEvaluation'
 import AddQuestion from './AddQuestion'
+import EvaluationResultList from './EvaluationResultList'
 import EvaluationsList from './EvaluationsList'
 import Question from './Question'
 import QuestionList from './QuestionList'
@@ -53,6 +54,15 @@ function Evaluation() {
 					role='staff'
 					exact
 					path={`${path}/:evaluationId/questions/new`}
+					componentProps={{type: 'Add'}}
+					component={AddQuestion}
+				/>
+				<ProtectedRoute
+					currentUser={currentUser}
+					role='staff'
+					exact
+					path={`${path}/:evaluationId/questions/:questionId/edit`}
+					componentProps={{type: 'Edit'}}
 					component={AddQuestion}
 				/>
 				<Route exact path={`${path}/:evaluationId/questions/:questionId`} component={Question} />
@@ -61,6 +71,7 @@ function Evaluation() {
 					path={`${path}/:evaluationId/questions/:questionId/submissions`}
 					component={SubmissionResultList}
 				/>
+				<Route path={`${path}/:evaluationId/submissions`} component={EvaluationResultList} />
 			</Switch>
 			{/* <EvaluationsList/> */}
 		</div>

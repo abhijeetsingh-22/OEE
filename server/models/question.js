@@ -2,10 +2,11 @@ const mongoose = require('mongoose')
 
 const questionSchema = new mongoose.Schema(
 	{
-		// order: {type: Number},
+		order: {type: Number},
 		body: {type: String},
 		marks: {type: String},
 		evaluation: {type: mongoose.Types.ObjectId, ref: 'evaluation'},
+		user: {type: mongoose.Types.ObjectId, ref: 'user'},
 	},
 	{timestamps: true, discriminatorKey: 'type'}
 )

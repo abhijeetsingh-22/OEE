@@ -1,15 +1,16 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
-import {useSelector} from 'react-redux'
+
+import {useDispatch, useSelector} from 'react-redux'
 import {apiCall} from '../../services/api'
 import {getCode, getLanguage} from '../../store/selectors/editor'
 import Editor from '../oj/Editor'
 import TestcaseInput from './TestcaseInput'
 import base64 from 'base-64'
 import {useHistory, useParams} from 'react-router'
+import {setCode} from '../../store/actions/editor'
 
-function AddQuestion() {
+function AddQuestion({type}) {
 	const [editorValue, setEditorValue] = useState('')
 	const code = useSelector(getCode)
 	const language = useSelector(getLanguage)
@@ -17,8 +18,32 @@ function AddQuestion() {
 	const [testcases, setTestcases] = useState([{input: '', output: '', isPublic: false}])
 	const [isTestcaseChanged, setIsTestcaseChanged] = useState(true)
 	const [title, setTitle] = useState('')
-	const {evaluationId} = useParams()
+	const {evaluationId, questionId} = useParams()
+	const [question, setQuestion] = useState({})
 	const history = useHistory()
+	const dispatch = useDispatch()
+	useEffect(() => {
+		const fetch = async () => {
+			if (type === 'Edit') {
+				const questionData = await apiCall(
+					'get',
+					`/api/evaluation/questions/${questionId}?type=edit`
+				)
+				var tcases = questionData.testcases.map((t) => {
+					var newTestcase = {...t}
+					newTestcase.input = Buffer.from(newTestcase.input, 'base64').toString('ascii')
+					delete newTestcase._id
+					return newTestcase
+				})
+				setQuestion(questionData)
+				setTitle(questionData.title)
+				setEditorValue(JSON.parse(questionData.bodyDelta))
+				dispatch(setCode(Buffer.from(questionData.source, 'base64').toString('ascii')))
+				setTestcases(tcases)
+			}
+		}
+		fetch()
+	}, [type, evaluationId, questionId])
 	const handleBodyChange = (value) => {
 		console.log(editorRef.current.getEditor().getContents())
 		console.log(editorRef.current.getEditor().getText())
@@ -104,7 +129,10 @@ function AddQuestion() {
 			type: 'code',
 		}
 		console.log(opt)
-		const data = await apiCall('post', `/api/evaluation/${evaluationId}/question`, opt)
+		const data =
+			type == 'Edit'
+				? await apiCall('put', `/api/evaluation/questions/${questionId}`, opt)
+				: await apiCall('post', `/api/evaluation/${evaluationId}/question`, opt)
 		console.log(data)
 		if (!data.error) {
 			history.push(`/evaluations/${evaluationId}`)
@@ -112,7 +140,7 @@ function AddQuestion() {
 	}
 	return (
 		<div className='row justify-content-center'>
-			<h3 className='text-center'>Add Question for Evaluation</h3>
+			<h3 className='text-center'>{type} Question </h3>
 			<div className='mb-3 col-10'>
 				<label htmlFor='questionTitle' className='form-label'>
 					Title

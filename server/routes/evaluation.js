@@ -14,6 +14,8 @@ const {
 	submitAnswer,
 	getSubmission,
 	getAllSubmissions,
+	getAllTopSubmissions,
+	getEvaluationDetails,
 } = require('../handlers/evaluation')
 const {isStaffUser} = require('../middleware/auth')
 
@@ -25,15 +27,17 @@ router.get('/', getAllEvaluations)
 
 //create a new question under evaluationId
 router.post('/:evaluationId/question', createQuestion)
-router.put('/question/:questionId', updateQuestion)
-router.delete('/question/:questionId', deleteQuestion)
+router.put('/questions/:questionId', updateQuestion)
+router.delete('/questions/:questionId', deleteQuestion)
 
 // Get ouput for each testcase
 router.post('/runtestcases', runTestcases)
 router.post('/runtestcases/cb', runTestcasesCb)
 
 //get question by evaluationId and order
-router.get('/:evaluationId', getAllQuestions)
+router.get('/:evaluationId/questions', getAllQuestions)
+//get evaluation details by evaluation id
+router.get('/:evaluationId', getEvaluationDetails)
 router.get('/questions/:questionId', getQuestion)
 
 // route to submit the answer of the questions
@@ -41,8 +45,11 @@ router.post('/questions/:questionId', submitAnswer)
 
 //get submission by id
 router.get('/submissions/:submissionId', getSubmission)
-//get all for a question
+//get all submissions for a question by user
 router.get('/questions/:questionId/submissions', getAllSubmissions)
+
+//get evaluation result for all students  (staff only route)
+router.get('/:evaluationId/submissions', isStaffUser, getAllTopSubmissions)
 
 // router.post('/questions/:questionId', submitAnswer)
 

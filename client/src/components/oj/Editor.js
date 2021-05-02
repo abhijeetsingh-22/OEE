@@ -82,10 +82,9 @@ function Editor({handleRun, loading, showRunBtn}) {
 				dispatch(setCode(editor.getValue()))
 			})
 			const model = editor.getModel()
-
-			model.setValue(code)
+			if (model.getValue() !== code) model.setValue(code)
 		}
-	}, [language, editor])
+	}, [language, editor, code])
 
 	return (
 		<div ref={containerRef}>

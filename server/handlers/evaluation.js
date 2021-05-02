@@ -48,18 +48,62 @@ const getAllQuestions = async (req, res, next) => {
 }
 const getQuestion = async (req, res, next) => {
 	try {
-		const foundQuestion = await db.Question.findById(req.params.questionId, {
-			source: false,
-		}).populate('testcases', '', 'testcase', {isPublic: true})
+		const type = req.query.type
+		const question = await db.Question.findById(req.params.questionId, {user: true})
+		const isOwner = req.user.id == question.user
+
+		var foundQuestion = {}
+		if (type == 'edit' && isOwner) {
+			foundQuestion = await db.Question.findById(req.params.questionId).populate(
+				'testcases',
+				'',
+				'testcase'
+			)
+		} else {
+			foundQuestion = await db.Question.findById(req.params.questionId, {
+				source: false,
+			}).populate('testcases', '', 'testcase', {isPublic: true})
+		}
+		console.log(foundQuestion)
 		return res.status(200).json(foundQuestion)
 	} catch (err) {
 		console.error(err)
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
+
 const updateQuestion = async (req, res, next) => {
 	try {
-		console.log('UPDATE QUESTION NOT IMPLEMENTED YET ')
+		const question = await db.Question.findById(req.params.questionId)
+		const isOwner = req.user.id == question.user
+		if (!isOwner) {
+			return res.status(403).json({error: {message: 'You are not allowed to do that'}})
+		}
+		await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		const {title, body, marks, type, testcases, source, bodyDelta, bodyHTML, options} = req.body
+
+		const updatedQuestion = await db.CodingQuesion.findByIdAndUpdate(question.id, {
+			$set: {
+				title,
+				body,
+				bodyDelta,
+				bodyHTML,
+				marks,
+				source,
+				type,
+				// user: req.user && req.user.id,
+				// evaluation: req.params.evaluationId,
+			},
+			$pullAll: {
+				testcases: question.testcases,
+			},
+		})
+		const newTestCases = testcases.map((t) => {
+			t.question = updatedQuestion._id
+			return t
+		})
+		const createdTestcases = await db.Testcase.insertMany(newTestCases)
+		return res.status(200).json(updatedQuestion)
 	} catch (err) {
 		console.error(err)
 		next({status: 400, message: 'Oops !! Something went wrong.'})
@@ -67,7 +111,15 @@ const updateQuestion = async (req, res, next) => {
 }
 const deleteQuestion = async (req, res, next) => {
 	try {
-		console.log('DELETE QUESTION NOT IMPLEMENTED YET')
+		const question = await db.Question.findById(req.params.questionId)
+		const isOwner = req.user.id == question.user
+		if (!isOwner) {
+			return res.status(403).json({error: {message: 'You are not allowed to do that'}})
+		}
+		await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		var deletedQuestion = await db.Question.findByIdAndDelete(question.id)
+		if (deletedQuestion) return res.status(200).json({message: 'question delted'})
+		else return res.status(400).json({error: {message: 'Question not found'}})
 	} catch (err) {
 		console.error(err)
 		next({status: 400, message: 'Oops !! Something went wrong.'})
@@ -137,6 +189,7 @@ const createQuestion = async (req, res, next) => {
 			type,
 			source,
 			evaluation: req.params.evaluationId,
+			user: req.user && req.user.id,
 		})
 		if (type === 'code') {
 			// const newExampleTestcases = exampleTestcases.map((t) => {
@@ -206,13 +259,20 @@ const runTestcasesCb = async (req, res, next) => {
 }
 const submitAnswer = async (req, res, next) => {
 	try {
-		const question = await db.Question.findById(req.params.questionId, 'type testcases').populate(
-			'testcases',
-			'id input output',
-			'testcase'
-		)
-		console.log(question.endTime)
+		const question = await db.Question.findById(req.params.questionId, 'type testcases evaluation')
+			.populate('testcases', 'id input output', 'testcase')
+			.populate('evaluation', 'startTime endTime', 'evaluation')
+		var startTime = new Date(question.evaluation.startTime).getTime()
+		var endTime = new Date(question.evaluation.endTime).getTime()
+		var currentTime = new Date().getTime()
+		console.log('😀😀😀😀😀 time is')
+		console.log('start time', startTime)
+		console.log('end time', endTime)
 		console.log(question)
+		if (currentTime < startTime || currentTime > endTime)
+			return res
+				.status(405)
+				.json({error: {message: 'Submission not allowed! The evluation is currently closed.'}})
 		if (question && question.type === 'code') {
 			const {source, lang} = req.body
 
@@ -285,6 +345,93 @@ const getAllSubmissions = async (req, res, next) => {
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
+
+const getAllTopSubmissions = async (req, res, next) => {
+	try {
+		var evaluationId = req.params.evaluationId
+		const eval = await db.Evaluation.findById(evaluationId, {user: true})
+		if (req.user.id != eval.user)
+			return res.status(401).json({error: {message: 'You are not allowed to do that'}})
+		const pipeline = [
+			{
+				$match: {
+					isTopSubmission: true,
+				},
+			},
+			{
+				$lookup: {
+					from: 'questions',
+					let: {questionId: '$question'},
+					pipeline: [
+						{$match: {$expr: {$eq: ['$_id', '$$questionId']}}},
+						{$project: {evaluation: true, createdAt: true}},
+						{$unwind: '$_id'},
+					],
+					as: 'question',
+				},
+			},
+			{
+				$unwind: {
+					path: '$question',
+				},
+			},
+			{
+				$sort: {
+					'question.createdAt': 1,
+				},
+			},
+			{
+				$group: {
+					_id: '$user',
+					questions: {$push: '$$ROOT'},
+					total: {$sum: 1},
+				},
+			},
+			{
+				$lookup: {
+					from: 'users',
+					let: {userId: '$_id'},
+					pipeline: [
+						{$match: {$expr: {$eq: ['$_id', '$$userId']}}},
+						{$project: {password: false, threads: false}},
+						{$unwind: '$_id'},
+					],
+					as: 'user',
+				},
+			},
+			{
+				$unwind: {
+					path: '$user',
+				},
+			},
+			{
+				$sort: {
+					'user.name': 1,
+				},
+			},
+		]
+		const submissions = await db.Submission.aggregate(pipeline)
+		if (!submissions) return res.status(200).json({error: {message: 'Submissions not found'}})
+		res.status(200).json(submissions)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
+const getEvaluationDetails = async (req, res, next) => {
+	try {
+		const foundEvaluation = await db.Evaluation.findById(req.params.evaluationId, {
+			questions: false,
+			isEvaluated: false,
+		})
+		if (!foundEvaluation)
+			return res.status(404).json({error: {message: 'Evaluation data not found'}})
+		return res.status(200).json(foundEvaluation)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
 module.exports = {
 	createEvaluation,
 	getAllEvaluations,
@@ -301,4 +448,6 @@ module.exports = {
 	submitCb,
 	getSubmission,
 	getAllSubmissions,
+	getAllTopSubmissions,
+	getEvaluationDetails,
 }

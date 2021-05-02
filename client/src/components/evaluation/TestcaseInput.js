@@ -76,7 +76,7 @@ function TestcaseInput({testcases, setTestcases, setIsTestcaseChanged}) {
 								type='checkbox'
 								className='form-check-input'
 								id='testcaseType'
-								checked={testcases[selectedTestcase].isPublic}
+								checked={testcases[selectedTestcase]?.isPublic}
 								onChange={handleInputChange}
 							></input>
 						</div>
@@ -104,7 +104,7 @@ function TestcaseInput({testcases, setTestcases, setIsTestcaseChanged}) {
 							<span>Output</span>
 						</div>
 						<pre id='output'>
-							{Buffer.from(testcases[selectedTestcase].output, 'base64').toString('ascii')}
+							{Buffer.from(testcases[selectedTestcase]?.output || '', 'base64').toString('ascii')}
 						</pre>
 					</div>
 				</div>

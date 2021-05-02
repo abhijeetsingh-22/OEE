@@ -27,5 +27,17 @@ testcaseSchema.post('insertMany', async function (docs, next) {
 		{new: true}
 	)
 })
+testcaseSchema.pre('deleteMany', async function (docs, next) {
+	console.log('😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀 inside deletemany')
+
+	// const testcasesIdArray = this._conditions._id['$in'].map((t) => t._id)
+	// const question = await mongoose.model('codeQuestion').findOneAndUpdate(
+	// 	{_id: docs[0].question},
+	// 	{
+	// 		$pullAll: {testcases: testcasesIdArray},
+	// 	}
+	// )
+})
+
 const Testcase = mongoose.model('testcase', testcaseSchema)
 module.exports = Testcase
