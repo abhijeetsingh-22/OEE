@@ -19,7 +19,7 @@ const codeSchema = new mongoose.Schema({
 	bodyDelta: {type: String},
 })
 const objectiveSchema = new mongoose.Schema({
-	correctOption: {type: [mongoose.Types.ObjectId], ref: 'quizOption'},
+	correctOptions: {type: [mongoose.Types.ObjectId], ref: 'quizOption'},
 	options: {type: [mongoose.Types.ObjectId], ref: 'quizOption'},
 })
 questionSchema.pre('save', async function (next) {

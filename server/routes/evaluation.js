@@ -26,9 +26,9 @@ router.get('/', getAllEvaluations)
 // router.post('/:evaluationId/question/code', createCodeQuestion);
 
 //create a new question under evaluationId
-router.post('/:evaluationId/question', createQuestion)
-router.put('/questions/:questionId', updateQuestion)
-router.delete('/questions/:questionId', deleteQuestion)
+router.post('/:evaluationId/question', isStaffUser, createQuestion)
+router.put('/questions/:questionId', isStaffUser, updateQuestion)
+router.delete('/questions/:questionId', isStaffUser, deleteQuestion)
 
 // Get ouput for each testcase
 router.post('/runtestcases', runTestcases)

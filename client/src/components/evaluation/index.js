@@ -13,7 +13,7 @@ import Question from './Question'
 import QuestionList from './QuestionList'
 import SubmissionResultList from './SubmissionResultList'
 
-function Evaluation() {
+function Evaluation({type}) {
 	const {path, url} = useRouteMatch()
 	const dispatch = useDispatch()
 	const currentUser = useSelector(getCurrentUser)
@@ -40,7 +40,7 @@ function Evaluation() {
 	return (
 		<div>
 			<Switch>
-				<Route exact path={path + '/'} component={EvaluationsList} />
+				<Route exact path={path + '/'} render={() => <EvaluationsList type={type} />} />
 				<ProtectedRoute
 					currentUser={currentUser}
 					role={'staff'}

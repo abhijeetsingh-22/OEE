@@ -18,7 +18,8 @@
     "mongoose": "^5.11.5",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.6",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "socket.io": "^4.1.1"
   },
   "devDependencies": {
     "dotenv": "^8.2.0"

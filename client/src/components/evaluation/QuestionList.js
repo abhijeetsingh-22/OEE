@@ -7,6 +7,7 @@ import ProtectedRoute from '../../hocs/ProtectedRoute'
 import {apiCall} from '../../services/api'
 import {getCurrentUser} from '../../store/selectors/user'
 import Spinner from '../common/Spinner'
+import OptionView from './OptionView'
 
 function QuestionList() {
 	const {evaluationId} = useParams()
@@ -96,11 +97,14 @@ function QuestionList() {
 							)}
 						</div>
 					) : (
-						<Link to={`${url}/questions/${question.id}`} className='text-decoration-none'>
-							<h5 className='card-title mb-0'>
-								Q{idx + 1}. {question.body.substring(0, 100)}
-							</h5>
-						</Link>
+						<div>
+							<a className='text-decoration-none'>
+								<h5 className='card-title mb-0'>
+									Q{idx + 1}. {question.body.substring(0, 100)}
+								</h5>
+							</a>
+							<OptionView question={question} options={question.options} />
+						</div>
 					)}
 					{/* <div className='text-muted mb-2'>By {capitalize(thread.user.name)}</div> */}
 					{/* <p className='card-text'>

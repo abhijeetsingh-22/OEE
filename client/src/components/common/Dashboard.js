@@ -22,8 +22,17 @@ const Dashboard = () => {
 							<Route exact path='/codeplayground' component={PlayGround} />
 							<Route exact path='/forum/ask' component={AddQuestionForm} />
 							<Route path='/forum' component={Forum} />
-							<Route path='/evaluations' component={Evaluation} />
+							<Route path='/evaluations' render={() => <Evaluation type='Evaluation' />} />
+							<Route path='/quiz' render={() => <Evaluation type='Quiz' />} />
 						</Switch>
+						<button
+							onClick={(e) => {
+								console.log('emitting')
+								// socket.emit('answer', 'good answer')
+							}}
+						>
+							Emit event
+						</button>
 					</div>
 				</div>
 			</div>

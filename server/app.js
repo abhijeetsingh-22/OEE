@@ -16,6 +16,7 @@ const cors = require('cors')
 const runSubmission = require('./handlers/oj')
 const {runTestcasesCb, submitCb} = require('./handlers/evaluation')
 const evaluationRoutes = require('./routes/evaluation')
+const quizRoutes = require('./routes/quiz')
 
 const app = express()
 
@@ -41,6 +42,7 @@ app.use('/api/forum', postRoutes)
 app.use('/api/forum/tags', TagRoutes)
 app.use('/api/oj', ojRoutes)
 app.use('/api/evaluation', evaluationRoutes)
+app.use('/api/quiz', quizRoutes)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404))

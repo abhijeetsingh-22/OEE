@@ -5,13 +5,14 @@ const services = require('../services/oj')
 const createEvaluation = async (req, res, next) => {
 	try {
 		//req.body={title,startTime,endTime,description,}
-		const {title, body, startTime, endTime, marks} = req.body
+		const {title, body, startTime, endTime, marks, type} = req.body
 		console.log(title)
 		const evaluation = await db.Evaluation.create({
 			title,
 			body,
 			startTime,
 			endTime,
+			type,
 			user: req.user.id,
 		})
 		console.log('happy to be here 🤦‍♂️🤦‍♂️', req.user)
@@ -23,7 +24,8 @@ const createEvaluation = async (req, res, next) => {
 
 const getAllEvaluations = async (req, res, next) => {
 	try {
-		let foundEvaluations = await db.Evaluation.find({})
+		const type = req.query.type
+		let foundEvaluations = await db.Evaluation.find({type})
 		return res.status(200).json(foundEvaluations)
 	} catch (err) {
 		console.error('error 🚫👨‍🚫 ', err)
@@ -37,19 +39,23 @@ const getAllQuestions = async (req, res, next) => {
 			{
 				evaluation: req.params.evaluationId,
 			},
-			{source: false, testcases: false}
+			{source: false, testcases: false,correctOptions:false}
 		).populate('exampleTestcases', 'input output', 'testcase')
+		.populate('options','-isCorrect','quizOption')
 		// .populate('testcases', 'input', 'testcase');
 		return res.status(200).json(foundQuesion)
 	} catch (err) {
-		console.error('error occured')
+		console.error(err)
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
 const getQuestion = async (req, res, next) => {
 	try {
 		const type = req.query.type
-		const question = await db.Question.findById(req.params.questionId, {user: true})
+		const question = await db.Question.findById(req.params.questionId, {
+			user: true,
+			evaluation: true,
+		}).populate('evaluation', 'startTime endTime', 'evaluation')
 		const isOwner = req.user.id == question.user
 
 		var foundQuestion = {}
@@ -59,7 +65,7 @@ const getQuestion = async (req, res, next) => {
 				'',
 				'testcase'
 			)
-		} else {
+		} else if (new Date().getTime() >= new Date(question.evaluation.startTime).getTime()) {
 			foundQuestion = await db.Question.findById(req.params.questionId, {
 				source: false,
 			}).populate('testcases', '', 'testcase', {isPublic: true})
@@ -75,34 +81,58 @@ const getQuestion = async (req, res, next) => {
 const updateQuestion = async (req, res, next) => {
 	try {
 		const question = await db.Question.findById(req.params.questionId)
+		console.log('updating 😁😁', question)
 		const isOwner = req.user.id == question.user
 		if (!isOwner) {
 			return res.status(403).json({error: {message: 'You are not allowed to do that'}})
 		}
-		await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		if (question.type == 'code') {
+			await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		} else await db.QuizOption.deleteMany({_id: {$in: question.options}})
 		const {title, body, marks, type, testcases, source, bodyDelta, bodyHTML, options} = req.body
-
-		const updatedQuestion = await db.CodingQuesion.findByIdAndUpdate(question.id, {
-			$set: {
-				title,
-				body,
-				bodyDelta,
-				bodyHTML,
-				marks,
-				source,
-				type,
-				// user: req.user && req.user.id,
-				// evaluation: req.params.evaluationId,
-			},
-			$pullAll: {
-				testcases: question.testcases,
-			},
-		})
-		const newTestCases = testcases.map((t) => {
-			t.question = updatedQuestion._id
-			return t
-		})
-		const createdTestcases = await db.Testcase.insertMany(newTestCases)
+		var updatedQuestion = {}
+		if (question.type == 'code') {
+			updatedQuestion = await db.CodingQuesion.findByIdAndUpdate(question.id, {
+				$set: {
+					title,
+					body,
+					bodyDelta,
+					bodyHTML,
+					marks,
+					source,
+					type,
+					// user: req.user && req.user.id,
+					// evaluation: req.params.evaluationId,
+				},
+				$pullAll: {
+					testcases: question.testcases,
+				},
+			})
+			const newTestCases = testcases.map((t) => {
+				t.question = updatedQuestion._id
+				return t
+			})
+			const createdTestcases = await db.Testcase.insertMany(newTestCases)
+		} else {
+			updatedQuestion = await db.ObjectiveQuestion.findByIdAndUpdate(
+				question.id,
+				{
+					$set: {
+						body,
+					},
+					$pullAll: {
+						options: question.options,
+						correctOptions: question.correctOptions,
+					},
+				},
+				{new: true}
+			)
+			const newOptions = options.map((o) => {
+				o.question = updatedQuestion._id
+				return o
+			})
+			const createdOptions = await db.QuizOption.insertMany(newOptions)
+		}
 		return res.status(200).json(updatedQuestion)
 	} catch (err) {
 		console.error(err)
@@ -116,7 +146,11 @@ const deleteQuestion = async (req, res, next) => {
 		if (!isOwner) {
 			return res.status(403).json({error: {message: 'You are not allowed to do that'}})
 		}
-		await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		if (question.type == 'code') {
+			await db.Testcase.deleteMany({_id: {$in: question.testcases}})
+		} else {
+			await db.QuizOption.deleteMany({_id: {$in: question.options}})
+		}
 		var deletedQuestion = await db.Question.findByIdAndDelete(question.id)
 		if (deletedQuestion) return res.status(200).json({message: 'question delted'})
 		else return res.status(400).json({error: {message: 'Question not found'}})
@@ -178,8 +212,19 @@ const createCodeQuestion = async (req, res, next) => {
 }
 const createQuestion = async (req, res, next) => {
 	try {
-		const {title, body, marks, type, testcases, source, bodyDelta, bodyHTML, options} = req.body
-
+		const {
+			title,
+			body,
+			marks,
+			type,
+			testcases,
+			source,
+			bodyDelta,
+			bodyHTML,
+			options,
+			correctOptions,
+		} = req.body
+		console.log(body, options, correctOptions)
 		const createdQuestion = await db.Question.create({
 			title,
 			body,
@@ -208,6 +253,7 @@ const createQuestion = async (req, res, next) => {
 				o.question = createdQuestion._id
 				return o
 			})
+			console.log(newOps)
 			const createdOptions = await db.QuizOption.insertMany(newOps)
 		}
 		const foundQuestion = await db.Question.findById(createdQuestion.id).populate('testcases')
@@ -259,32 +305,39 @@ const runTestcasesCb = async (req, res, next) => {
 }
 const submitAnswer = async (req, res, next) => {
 	try {
-		const question = await db.Question.findById(req.params.questionId, 'type testcases evaluation')
-			.populate('testcases', 'id input output', 'testcase')
-			.populate('evaluation', 'startTime endTime', 'evaluation')
-		var startTime = new Date(question.evaluation.startTime).getTime()
-		var endTime = new Date(question.evaluation.endTime).getTime()
-		var currentTime = new Date().getTime()
-		console.log('😀😀😀😀😀 time is')
-		console.log('start time', startTime)
-		console.log('end time', endTime)
-		console.log(question)
-		if (currentTime < startTime || currentTime > endTime)
-			return res
-				.status(405)
-				.json({error: {message: 'Submission not allowed! The evluation is currently closed.'}})
-		if (question && question.type === 'code') {
-			const {source, lang} = req.body
+		const questionType = req.query.type
+		if (questionType == 'objective') {
+		} else {
+			const question = await db.Question.findById(
+				req.params.questionId,
+				'type testcases evaluation'
+			)
+				.populate('testcases', 'id input output', 'testcase')
+				.populate('evaluation', 'startTime endTime', 'evaluation')
+			var startTime = new Date(question.evaluation.startTime).getTime()
+			var endTime = new Date(question.evaluation.endTime).getTime()
+			var currentTime = new Date().getTime()
+			console.log('😀😀😀😀😀 time is')
+			console.log('start time', startTime)
+			console.log('end time', endTime)
+			console.log(question)
+			if (currentTime < startTime || currentTime > endTime)
+				return res
+					.status(405)
+					.json({error: {message: 'Submission not allowed! The evluation is currently closed.'}})
+			if (question && question.type === 'code') {
+				const {source, lang} = req.body
 
-			const {id} = await services.submitAnswer({source, lang, testcases: question.testcases})
-			const submission = await db.Submission.create({
-				judgeId: id,
-				source,
-				lang,
-				user: req.user && req.user.id,
-				question: question.id,
-			})
-			return res.status(200).json({id: submission.id})
+				const {id} = await services.submitAnswer({source, lang, testcases: question.testcases})
+				const submission = await db.Submission.create({
+					judgeId: id,
+					source,
+					lang,
+					user: req.user && req.user.id,
+					question: question.id,
+				})
+				return res.status(200).json({id: submission.id})
+			}
 		}
 	} catch (err) {
 		console.error(err)

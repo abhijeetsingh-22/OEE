@@ -5,7 +5,7 @@ import {Link, useRouteMatch} from 'react-router-dom'
 import {apiCall} from '../../services/api'
 import {getCurrentUser} from '../../store/selectors/user'
 import Spinner from '../common/Spinner'
-function EvaluationsList() {
+function EvaluationsList({type}) {
 	const {path, url} = useRouteMatch()
 	console.log(path, url)
 	const [evaluations, setEvaluations] = useState([])
@@ -14,7 +14,8 @@ function EvaluationsList() {
 
 	useEffect(() => {
 		const fetch = async () => {
-			const res = await apiCall('get', '/api/evaluation')
+			const urlSlug = type == 'Quiz' ? 'quiz' : 'code'
+			const res = await apiCall('get', `/api/evaluation?type=${urlSlug}`)
 			if (!res.error) {
 				setEvaluations(res)
 				setLoading(false)
@@ -22,7 +23,7 @@ function EvaluationsList() {
 		}
 		fetch()
 		return () => {}
-	}, [])
+	}, [type])
 
 	const evaluationView = evaluations.map((evaluation) => {
 		return (
@@ -61,7 +62,7 @@ function EvaluationsList() {
 	return (
 		<div className=''>
 			<div className='d-flex justify-content-between mb-2 p-1'>
-				<h3>Evaluations</h3>
+				<h3>{type}</h3>
 				{currentUser.user.role === 'staff' && (
 					<Link to='/evaluations/new' className=' btn btn-primary '>
 						Create Evaluation

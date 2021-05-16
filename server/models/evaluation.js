@@ -1,18 +1,19 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const evaluationSchema = new mongoose.Schema(
-  {
-    title: {type: String},
-    startTime: {type: Date, required: true},
-    endTime: {type: Date},
-    body: {type: String},
-    user: {type: mongoose.Types.ObjectId, ref: 'user'},
-    marks: {type: String},
-    questions: {type: [mongoose.Types.ObjectId], ref: 'question'},
-    isEvaluated: {type: Boolean, default: false},
-  },
-  {timestamps: true}
-);
+	{
+		title: {type: String},
+		startTime: {type: Date, required: true},
+		endTime: {type: Date},
+		body: {type: String},
+		user: {type: mongoose.Types.ObjectId, ref: 'user'},
+		marks: {type: String},
+		questions: {type: [mongoose.Types.ObjectId], ref: 'question'},
+		isEvaluated: {type: Boolean, default: false},
+		type: {type: String, default: 'quiz'},
+	},
+	{timestamps: true}
+)
 
-const Evaluation = mongoose.model('evaluation', evaluationSchema);
-module.exports = Evaluation;
+const Evaluation = mongoose.model('evaluation', evaluationSchema)
+module.exports = Evaluation
