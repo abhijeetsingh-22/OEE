@@ -64,8 +64,8 @@ function EvaluationsList({type}) {
 			<div className='d-flex justify-content-between mb-2 p-1'>
 				<h3>{type}</h3>
 				{currentUser.user.role === 'staff' && (
-					<Link to='/evaluations/new' className=' btn btn-primary '>
-						Create Evaluation
+					<Link to={`${url}/new`} className=' btn btn-primary '>
+						Create {type}
 					</Link>
 				)}
 			</div>

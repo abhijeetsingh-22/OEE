@@ -8,6 +8,7 @@ import AddQuestionForm from '../forum/AddQuestionForm'
 import Editor from '../oj/Editor'
 import Evaluation from '../evaluation'
 import PlayGround from '../oj'
+import Quiz from '../evaluation/quiz'
 const Dashboard = () => {
 	return (
 		<>
@@ -23,7 +24,7 @@ const Dashboard = () => {
 							<Route exact path='/forum/ask' component={AddQuestionForm} />
 							<Route path='/forum' component={Forum} />
 							<Route path='/evaluations' render={() => <Evaluation type='Evaluation' />} />
-							<Route path='/quiz' render={() => <Evaluation type='Quiz' />} />
+							<Route path='/quiz' render={() => <Quiz type='Quiz' />} />
 						</Switch>
 						<button
 							onClick={(e) => {

@@ -6,7 +6,7 @@ import {apiCall} from '../../services/api'
 import {setLanguages} from '../../store/actions/editor'
 import {getCurrentUser} from '../../store/selectors/user'
 import AddEvaluation from './AddEvaluation'
-import AddQuestion from './AddQuestion'
+import AddCodeQuestion from './AddCodeQuestion'
 import EvaluationResultList from './EvaluationResultList'
 import EvaluationsList from './EvaluationsList'
 import Question from './Question'
@@ -46,6 +46,7 @@ function Evaluation({type}) {
 					role={'staff'}
 					exact
 					path={`${path}/new`}
+					componentProps={{type}}
 					component={AddEvaluation}
 				/>
 				<Route exact path={`${path}/:evaluationId`} component={QuestionList} />
@@ -53,9 +54,9 @@ function Evaluation({type}) {
 					currentUser={currentUser}
 					role='staff'
 					exact
-					path={`${path}/:evaluationId/questions/new`}
+					path={`/evaluations/:evaluationId/questions/new`}
 					componentProps={{type: 'Add'}}
-					component={AddQuestion}
+					component={AddCodeQuestion}
 				/>
 				<ProtectedRoute
 					currentUser={currentUser}
@@ -63,7 +64,7 @@ function Evaluation({type}) {
 					exact
 					path={`${path}/:evaluationId/questions/:questionId/edit`}
 					componentProps={{type: 'Edit'}}
-					component={AddQuestion}
+					component={AddCodeQuestion}
 				/>
 				<Route exact path={`${path}/:evaluationId/questions/:questionId`} component={Question} />
 				<Route

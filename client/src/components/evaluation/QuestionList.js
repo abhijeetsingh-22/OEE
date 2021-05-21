@@ -97,13 +97,35 @@ function QuestionList() {
 							)}
 						</div>
 					) : (
-						<div>
-							<a className='text-decoration-none'>
-								<h5 className='card-title mb-0'>
-									Q{idx + 1}. {question.body.substring(0, 100)}
-								</h5>
-							</a>
-							<OptionView question={question} options={question.options} />
+						<div className='row'>
+							<div className='col'>
+								<a className='text-decoration-none'>
+									<h5 className='card-title mb-2'>
+										Q{idx + 1}. {question.body}
+									</h5>
+								</a>
+								<OptionView question={question} options={question.options || []} />
+							</div>
+							{currentUser.user.id === question.user && (
+								<div className='col-1'>
+									<Link
+										to={`${url}/questions/${question.id}/edit`}
+										className='btn btn-sm btn-warning w-100 mb-2'
+									>
+										Edit
+									</Link>
+									<button
+										onClick={async (e) => {
+											e.preventDefault()
+											await apiCall('delete', `/api/evaluation/questions/${question.id}`)
+											window.location.reload()
+										}}
+										className='btn btn-sm btn-danger w-100'
+									>
+										Delete
+									</button>
+								</div>
+							)}
 						</div>
 					)}
 					{/* <div className='text-muted mb-2'>By {capitalize(thread.user.name)}</div> */}

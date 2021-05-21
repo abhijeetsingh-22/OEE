@@ -10,7 +10,7 @@ import base64 from 'base-64'
 import {useHistory, useParams} from 'react-router'
 import {setCode} from '../../store/actions/editor'
 
-function AddQuestion({type}) {
+function AddCodeQuestion({type}) {
 	const [editorValue, setEditorValue] = useState('')
 	const code = useSelector(getCode)
 	const language = useSelector(getLanguage)
@@ -221,4 +221,4 @@ function AddQuestion({type}) {
 	)
 }
 
-export default AddQuestion
+export default AddCodeQuestion

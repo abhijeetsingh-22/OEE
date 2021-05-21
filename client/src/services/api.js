@@ -6,8 +6,10 @@ export function apiCall(method, path, data) {
 		return axios[method](`${process.env.REACT_APP_API_URL}${path}`, data)
 			.then((response) => resolve(response.data))
 			.catch((err) => {
-				toast.error(err.response.data.error.message)
-				reject(err.response.data.error)
+				if (err?.response?.data?.error) {
+					toast.error(err.response.data.error.message)
+					reject(err.response.data.error)
+				} else reject()
 			})
 	})
 }

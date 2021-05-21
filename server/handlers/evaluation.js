@@ -21,6 +21,26 @@ const createEvaluation = async (req, res, next) => {
 		return next(err)
 	}
 }
+const updateEvaluation = async (req, res, next) => {
+	try {
+		const {title, body, startTime, endTime, type} = req.body
+		const updatedEvaluation = await db.Evaluation.findByIdAndUpdate(
+			req.params.evaluationId,
+			{
+				title,
+				body,
+				startTime,
+				endTime,
+			},
+			{new: true, omitUndefined: true}
+		)
+		if (!updatedEvaluation) return res.status(200).json({error: {message: 'Evaluation not found'}})
+		else return res.status(200).json(updatedEvaluation)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
 
 const getAllEvaluations = async (req, res, next) => {
 	try {
@@ -39,9 +59,10 @@ const getAllQuestions = async (req, res, next) => {
 			{
 				evaluation: req.params.evaluationId,
 			},
-			{source: false, testcases: false,correctOptions:false}
-		).populate('exampleTestcases', 'input output', 'testcase')
-		.populate('options','-isCorrect','quizOption')
+			{source: false, testcases: false, correctOptions: false}
+		)
+			.populate('exampleTestcases', 'input output', 'testcase')
+			.populate('options', '-isCorrect', 'quizOption')
 		// .populate('testcases', 'input', 'testcase');
 		return res.status(200).json(foundQuesion)
 	} catch (err) {
@@ -212,19 +233,7 @@ const createCodeQuestion = async (req, res, next) => {
 }
 const createQuestion = async (req, res, next) => {
 	try {
-		const {
-			title,
-			body,
-			marks,
-			type,
-			testcases,
-			source,
-			bodyDelta,
-			bodyHTML,
-			options,
-			correctOptions,
-		} = req.body
-		console.log(body, options, correctOptions)
+		const {title, body, marks, type, testcases, source, bodyDelta, bodyHTML, options} = req.body
 		const createdQuestion = await db.Question.create({
 			title,
 			body,
@@ -305,26 +314,51 @@ const runTestcasesCb = async (req, res, next) => {
 }
 const submitAnswer = async (req, res, next) => {
 	try {
-		const questionType = req.query.type
-		if (questionType == 'objective') {
-		} else {
-			const question = await db.Question.findById(
-				req.params.questionId,
-				'type testcases evaluation'
+		const question = await db.Question.findById(req.params.questionId, 'type testcases evaluation')
+			.populate('testcases', 'id input output', 'testcase')
+			.populate('evaluation', 'startTime endTime', 'evaluation')
+			.populate('options', '', 'quizOption')
+			.populate('correctOptions', '', 'quizOption')
+
+		var startTime = new Date(question.evaluation.startTime).getTime()
+		var endTime = new Date(question.evaluation.endTime).getTime()
+		var currentTime = new Date().getTime()
+		console.log('😀😀😀😀😀 time is', currentTime)
+		console.log('start time', startTime)
+		console.log('end time', endTime)
+		// console.log(question)
+		if (currentTime < startTime || currentTime > endTime)
+			return res
+				.status(405)
+				.json({error: {message: 'Submission not allowed! The evluation is currently closed.'}})
+		// const questionType = req.query.type
+
+		if (question.type == 'objective') {
+			const {answer: sentAnswer} = req.body
+			var score = 0
+			// if (question.correctOptions.length === 1)
+			// 	score = sentAnswer.option == question.correctOptions[0]._id ? 1 : 0
+			// else
+			score = question.correctOptions.reduce((score, currOption) => {
+				// console.log(currOption)
+				// console.log(sentAnswer.options.includes(currOption._id.toString()))
+				// console.log(sentAnswer.options)
+				// console.log('before', score)
+				if (sentAnswer.options.includes(currOption._id.toString())) return 1
+				else return score
+			}, 0)
+			// score = score / question.correctOptions.length
+			// score=question.correctOption
+			// console.log(question._id, req.user.id)
+			console.log('after', score)
+			const updatedAnswer = await db.UserAnswer.findOneAndUpdate(
+				{question: question._id, user: req.user.id},
+				{answer: [...sentAnswer.options], score, user: req.user.id},
+				{upsert: true}
 			)
-				.populate('testcases', 'id input output', 'testcase')
-				.populate('evaluation', 'startTime endTime', 'evaluation')
-			var startTime = new Date(question.evaluation.startTime).getTime()
-			var endTime = new Date(question.evaluation.endTime).getTime()
-			var currentTime = new Date().getTime()
-			console.log('😀😀😀😀😀 time is')
-			console.log('start time', startTime)
-			console.log('end time', endTime)
-			console.log(question)
-			if (currentTime < startTime || currentTime > endTime)
-				return res
-					.status(405)
-					.json({error: {message: 'Submission not allowed! The evluation is currently closed.'}})
+			// console.log('score is', score, answer.option, question.correctOptions[0]._id)
+			return res.status(200).json(updatedAnswer)
+		} else {
 			if (question && question.type === 'code') {
 				const {source, lang} = req.body
 
@@ -402,8 +436,8 @@ const getAllSubmissions = async (req, res, next) => {
 const getAllTopSubmissions = async (req, res, next) => {
 	try {
 		var evaluationId = req.params.evaluationId
-		const eval = await db.Evaluation.findById(evaluationId, {user: true})
-		if (req.user.id != eval.user)
+		const evaluation = await db.Evaluation.findById(evaluationId, {user: true})
+		if (req.user.id != evaluation.user)
 			return res.status(401).json({error: {message: 'You are not allowed to do that'}})
 		const pipeline = [
 			{
@@ -487,6 +521,7 @@ const getEvaluationDetails = async (req, res, next) => {
 }
 module.exports = {
 	createEvaluation,
+	updateEvaluation,
 	getAllEvaluations,
 	getQuestion,
 	getAllQuestions,

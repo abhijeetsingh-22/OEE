@@ -9,7 +9,7 @@ import {apiCall} from '../../services/api'
 //     marks: {type: String},
 //     questions: {type: [mongoose.Types.ObjectId], ref: 'question'},
 //     isEvaluated: {type: Boolean, default: false},
-function AddEvaluation() {
+function AddEvaluation({type}) {
 	const [title, setTitle] = useState('')
 	const [startTime, setStartTime] = useState(0)
 	const [endTime, setEndTime] = useState(0)
@@ -20,13 +20,13 @@ function AddEvaluation() {
 		const data = {title, body, startTime, endTime}
 		console.log(data)
 		apiCall('post', '/api/evaluation', data)
-			.then((res) => history.push(`/evaluation/${res.id}`))
+			.then((res) => history.push(`/${type.toLowerCase()}/${res.id}`))
 			.catch((err) => console.log(err))
 	}
 	return (
 		<div className='row align-items-center justify-content-center mx-5 '>
 			{/* <div className=''> */}
-			<h3 className='text-center mb-3  '>Enter Evaluation Details</h3>
+			<h3 className='text-center mb-3  '>Enter {type} Details</h3>
 			<div className='mb-3 col-12 col-md-12 col-lg-10'>
 				<label htmlFor='question-title' className='form-label'>
 					Title

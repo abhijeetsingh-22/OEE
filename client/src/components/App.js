@@ -11,7 +11,7 @@ import {setCurrentUser, setToken} from '../store/actions/auth'
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 const store = configureStore()
-toast.configure({position: toast.POSITION.BOTTOM_RIGHT})
+toast.configure({position: toast.POSITION.BOTTOM_RIGHT, limit: 4})
 function App() {
 	if (localStorage.authToken) {
 		setToken(localStorage.authToken)
