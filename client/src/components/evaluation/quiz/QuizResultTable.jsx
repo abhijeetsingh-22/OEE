@@ -56,7 +56,6 @@ function QuizResultTable() {
 		const qData = userScores.reduce((res, curr, idx) => {
 			return {...res, [`q${idx + 1}`]: curr}
 		}, {})
-		console.log('table score', qData)
 		// totalScore /= evaluation.length
 		const res = {username: userSub.user.name, scores: userScores, totalScore, ...qData}
 		return res

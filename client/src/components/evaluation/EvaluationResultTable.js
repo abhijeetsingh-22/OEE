@@ -49,8 +49,11 @@ function EvaluationResultTable() {
 
 			return 'NA'
 		})
+		const qData = userScores.reduce((res, curr, idx) => {
+			return {...res, [`q${idx + 1}`]: curr}
+		}, {})
 		totalScore /= evaluation.length
-		const res = {username: userSub.user.name, scores: userScores, totalScore}
+		const res = {username: userSub.user.name, scores: userScores, totalScore, ...qData}
 		return res
 	})
 	console.log('table data is ', tableData)
