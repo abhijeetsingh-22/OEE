@@ -29,6 +29,13 @@ questionSchema.pre('save', async function (next) {
 		.findOneAndUpdate({_id: this.evaluation}, {$push: {questions: this._id}})
 	return next()
 })
+questionSchema.pre('deleteOne', async function (next) {
+	console.log(this)
+	await mongoose
+		.model('evaluation')
+		.findOneAndUpdate({_id: this.evaluation}, {$pull: {questions: this._id}})
+	return next()
+})
 const Question = mongoose.model('question', questionSchema)
 const CodingQuesion = Question.discriminator('codeQuestion', codeSchema, 'code')
 const ObjectiveQuestion = Question.discriminator('objectiveQuestion', objectiveSchema, 'objective')

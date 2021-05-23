@@ -433,71 +433,114 @@ const getAllSubmissions = async (req, res, next) => {
 
 const getAllTopSubmissions = async (req, res, next) => {
 	try {
+		const type = req.query.type
 		var evaluationId = req.params.evaluationId
 		const evaluation = await db.Evaluation.findById(evaluationId, {user: true})
 		if (req.user.id != evaluation.user)
 			return res.status(401).json({error: {message: 'You are not allowed to do that'}})
-		const pipeline = [
-			{
-				$match: {
-					isTopSubmission: true,
+		if (type == 'quiz') {
+			const questionIdArray = await db.Evaluation.findById(evaluationId, 'questions')
+			console.log(questionIdArray)
+			const pipeline = [
+				{$match: {question: {$in: questionIdArray.questions}}},
+				{
+					$group: {
+						_id: '$user',
+						questions: {$push: '$$ROOT'},
+						total: {$sum: 1},
+					},
 				},
-			},
-			{
-				$lookup: {
-					from: 'questions',
-					let: {questionId: '$question'},
-					pipeline: [
-						{$match: {$expr: {$eq: ['$_id', '$$questionId']}}},
-						{$project: {evaluation: true, createdAt: true}},
-						{$unwind: '$_id'},
-					],
-					as: 'question',
+				{
+					$lookup: {
+						from: 'users',
+						let: {userId: '$_id'},
+						pipeline: [
+							{$match: {$expr: {$eq: ['$_id', '$$userId']}}},
+							{$project: {password: false, threads: false}},
+							{$unwind: '$_id'},
+						],
+						as: 'user',
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: '$question',
+				{
+					$unwind: {
+						path: '$user',
+					},
 				},
-			},
-			{
-				$sort: {
-					'question.createdAt': 1,
+				{
+					$sort: {
+						'user.name': 1,
+					},
 				},
-			},
-			{
-				$group: {
-					_id: '$user',
-					questions: {$push: '$$ROOT'},
-					total: {$sum: 1},
+			]
+			const userAnswers = await db.UserAnswer.aggregate(pipeline)
+			// const userAnswers = await db.UserAnswer.find({
+			// 	question: {$in: questionIdArray.questions},
+			// })
+			return res.status(200).json(userAnswers)
+		} else {
+			const pipeline = [
+				{
+					$match: {
+						isTopSubmission: true,
+					},
 				},
-			},
-			{
-				$lookup: {
-					from: 'users',
-					let: {userId: '$_id'},
-					pipeline: [
-						{$match: {$expr: {$eq: ['$_id', '$$userId']}}},
-						{$project: {password: false, threads: false}},
-						{$unwind: '$_id'},
-					],
-					as: 'user',
+				{
+					$lookup: {
+						from: 'questions',
+						let: {questionId: '$question'},
+						pipeline: [
+							{$match: {$expr: {$eq: ['$_id', '$$questionId']}}},
+							{$project: {evaluation: true, createdAt: true}},
+							{$unwind: '$_id'},
+						],
+						as: 'question',
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: '$user',
+				{
+					$unwind: {
+						path: '$question',
+					},
 				},
-			},
-			{
-				$sort: {
-					'user.name': 1,
+				{
+					$sort: {
+						'question.createdAt': 1,
+					},
 				},
-			},
-		]
-		const submissions = await db.Submission.aggregate(pipeline)
-		if (!submissions) return res.status(200).json({error: {message: 'Submissions not found'}})
-		res.status(200).json(submissions)
+				{
+					$group: {
+						_id: '$user',
+						questions: {$push: '$$ROOT'},
+						total: {$sum: 1},
+					},
+				},
+				{
+					$lookup: {
+						from: 'users',
+						let: {userId: '$_id'},
+						pipeline: [
+							{$match: {$expr: {$eq: ['$_id', '$$userId']}}},
+							{$project: {password: false, threads: false}},
+							{$unwind: '$_id'},
+						],
+						as: 'user',
+					},
+				},
+				{
+					$unwind: {
+						path: '$user',
+					},
+				},
+				{
+					$sort: {
+						'user.name': 1,
+					},
+				},
+			]
+			const submissions = await db.Submission.aggregate(pipeline)
+			if (!submissions) return res.status(200).json({error: {message: 'Submissions not found'}})
+			res.status(200).json(submissions)
+		}
 	} catch (err) {
 		console.error(err)
 		next({status: 400, message: 'Oops !! Something went wrong.'})

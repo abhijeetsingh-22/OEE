@@ -65,6 +65,10 @@ function QuestionList() {
 		)
 	}
 	const questionView = questions.map((question, idx) => {
+		const ans = userAnswers.filter((a) => {
+			return a.question == question._id
+		})[0]
+
 		return (
 			<div className='card'>
 				{/* <img src="..." className="card-img-top" alt="..."> */}
@@ -108,7 +112,7 @@ function QuestionList() {
 										Q{idx + 1}. {question.body}
 									</h5>
 								</a>
-								<OptionView question={question} options={question.options || []} />
+								<OptionView question={question} options={question.options || []} answers={ans} />
 							</div>
 							{currentUser.user.id === question.user && (
 								<div className='col-1'>

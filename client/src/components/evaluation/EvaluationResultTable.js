@@ -3,7 +3,8 @@ import {useHistory, useParams} from 'react-router'
 import {apiCall} from '../../services/api'
 import Spinner from '../common/Spinner'
 import {toast} from 'react-toastify'
-function EvaluationResultList() {
+import ResultsTableView from './ResultsTableView'
+function EvaluationResultTable() {
 	const {evaluationId} = useParams()
 	const [submissions, setSubmissions] = useState([])
 	const [evaluation, setEvaluation] = useState([])
@@ -31,7 +32,8 @@ function EvaluationResultList() {
 	}, [evaluationId])
 	if (loading) return <Spinner />
 	// console.log("helloj",submissions);
-	const userResultView = submissions.map((userSub) => {
+
+	const tableData = submissions.map((userSub) => {
 		var totalScore = 0
 		var userScores = evaluation.map((question) => {
 			var attempt = userSub.questions.find((sub) => {
@@ -40,22 +42,18 @@ function EvaluationResultList() {
 			})
 			if (!!attempt) {
 				totalScore += attempt.score
-				return <td>{attempt.score}</td>
+				return attempt.score
 			}
 			console.log('helloj', attempt)
 			// console.log("hello",attempt,);
 
-			return <td>NA</td>
+			return 'NA'
 		})
 		totalScore /= evaluation.length
-		return (
-			<tr>
-				<td>{userSub.user.name}</td>
-				{userScores}
-				<td>{totalScore}</td>
-			</tr>
-		)
+		const res = {username: userSub.user.name, scores: userScores, totalScore}
+		return res
 	})
+	console.log('table data is ', tableData)
 	// evaluation.map(question=>{
 	// 	var userSub=submissions.map(sub=>{
 	// 		return sub
@@ -71,30 +69,9 @@ function EvaluationResultList() {
 	// </div>
 	return (
 		<div>
-			<div>
-				<h4 className='mt-4'>Submissions</h4>
-				<table className='table table-bordered text-center'>
-					<thead className='table-dark'>
-						<tr>
-							<th scope='col'>User</th>
-							{evaluation.map((q, idx) => (
-								<th scope='col'>Q.{idx + 1}</th>
-							))}
-							<th>Total (100)</th>
-						</tr>
-					</thead>
-					<tbody>
-						{userResultView}
-						{/* <tr className='table-dark'>
-							<td></td>
-							<td></td>
-							<td>Total Score %</td>
-						</tr> */}
-					</tbody>
-				</table>
-			</div>
+			<ResultsTableView tableData={tableData} maxMarks={100} />
 		</div>
 	)
 }
 
-export default EvaluationResultList
+export default EvaluationResultTable
