@@ -7,6 +7,7 @@ import AddEvaluation from '../AddEvaluation'
 import EvaluationsList from '../EvaluationsList'
 import QuestionList from '../QuestionList'
 import AddQuizQuestion from './AddQuizQuestion'
+import UpdateQuizQuestion from './UpdateQuizQuestion'
 
 function Quiz({type}) {
 	const currentUser = useSelector(getCurrentUser)
@@ -32,15 +33,15 @@ function Quiz({type}) {
 					componentProps={{type: 'Add'}}
 					component={AddQuizQuestion}
 				/>
-				{/*<ProtectedRoute
+				<ProtectedRoute
 					currentUser={currentUser}
 					role='staff'
 					exact
 					path={`${path}/:evaluationId/questions/:questionId/edit`}
 					componentProps={{type: 'Edit'}}
-					component={AddCodeQuestion}
+					component={UpdateQuizQuestion}
 				/>
-				<Route exact path={`${path}/:evaluationId/questions/:questionId`} component={Question} />
+				{/*<Route exact path={`${path}/:evaluationId/questions/:questionId`} component={Question} />
 				<Route
 					exact
 					path={`${path}/:evaluationId/questions/:questionId/submissions`}

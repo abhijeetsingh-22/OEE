@@ -1,29 +1,28 @@
 import React, {useState} from 'react'
-import {useHistory, useParams} from 'react-router'
 import {toast} from 'react-toastify'
-import {apiCall} from '../../../services/api'
 import AddQuizOptions from './AddQuizOptions'
 
-function AddQuizQuestion() {
-	const {evaluationId} = useParams()
-	const history = useHistory()
-	const [options, setOptions] = useState([])
-	const [body, setBody] = useState('')
+function QuizInputForm({title, questionBody, onSubmit, prevOptions}) {
+	// const {evaluationId} = useParams()
+	// const history = useHistory()
+	const [options, setOptions] = useState(prevOptions || [])
+	const [body, setBody] = useState(questionBody)
 	const handleSubmit = (e) => {
 		e.preventDefault()
 		if (options.length <= 0) return toast.error('Please add atleast one option')
 		if (options.some((o) => o.body.length <= 0)) return toast.error('Option cannot be blank')
 		if (!options.some((o) => o.isCorrect)) return toast.error('Please mark correct answer')
-		apiCall('post', `/api/evaluation/${evaluationId}/question`, {
-			body,
-			options,
-			type: 'objective',
-		}).then((data) => history.push(`/quiz/${evaluationId}`))
+		// apiCall('post', `/api/evaluation/${evaluationId}/question`, {
+		// 	body,
+		// 	options,
+		// 	type: 'objective',
+		// }).then((data) => history.push(`/quiz/${evaluationId}`))
+		onSubmit({body, options, type: 'objective'})
 	}
 
 	return (
 		<div className='row justify-content-center'>
-			<h3 className='text-center'> Add Question</h3>
+			<h3 className='text-center'> {title}</h3>
 			<div className='mb-2 col-10'>
 				<div className='mb-3'>
 					<label htmlFor='questionBody' className='form-label fs-6'>
@@ -44,4 +43,4 @@ function AddQuizQuestion() {
 	)
 }
 
-export default AddQuizQuestion
+export default QuizInputForm

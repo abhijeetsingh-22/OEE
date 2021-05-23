@@ -17,6 +17,7 @@ const {
 	getAllTopSubmissions,
 	getEvaluationDetails,
 	updateEvaluation,
+	getUserAnswers,
 } = require('../handlers/evaluation')
 const {isStaffUser} = require('../middleware/auth')
 
@@ -41,6 +42,8 @@ router.get('/:evaluationId/questions', getAllQuestions)
 //get evaluation details by evaluation id
 router.get('/:evaluationId', getEvaluationDetails)
 router.get('/questions/:questionId', getQuestion)
+//get all the answers submitted by a user for a particular evaluation(quiz)
+router.get('/:evaluationId/answers', getUserAnswers)
 
 // route to submit the answer of the questions
 router.post('/questions/:questionId', submitAnswer)

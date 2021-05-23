@@ -81,11 +81,9 @@ const getQuestion = async (req, res, next) => {
 
 		var foundQuestion = {}
 		if (type == 'edit' && isOwner) {
-			foundQuestion = await db.Question.findById(req.params.questionId).populate(
-				'testcases',
-				'',
-				'testcase'
-			)
+			foundQuestion = await db.Question.findById(req.params.questionId, '-correctOptions')
+				.populate('testcases', '', 'testcase')
+				.populate('options', '', 'quizOption')
 		} else if (new Date().getTime() >= new Date(question.evaluation.startTime).getTime()) {
 			foundQuestion = await db.Question.findById(req.params.questionId, {
 				source: false,
@@ -519,6 +517,24 @@ const getEvaluationDetails = async (req, res, next) => {
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
+const getUserAnswers = async (req, res, next) => {
+	try {
+		const foundEvaluation = await db.Evaluation.findById(req.params.evaluationId, {
+			isEvaluated: false,
+		})
+		if (!foundEvaluation)
+			return res.status(404).json({error: {message: 'Evaluation data not found'}})
+		const userAnswers = await db.UserAnswer.find({
+			user: req.user.id,
+			question: {$in: foundEvaluation.questions},
+		})
+		console.log('the user answer are ', userAnswers)
+		return res.status(200).json(userAnswers)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
 module.exports = {
 	createEvaluation,
 	updateEvaluation,
@@ -538,4 +554,5 @@ module.exports = {
 	getAllSubmissions,
 	getAllTopSubmissions,
 	getEvaluationDetails,
+	getUserAnswers,
 }

@@ -17,6 +17,7 @@ function QuestionList() {
 	const currentUser = useSelector(getCurrentUser)
 	const [loading, setLoading] = useState(true)
 	const [isEvaluationActive, setIsEvaluationActive] = useState(true)
+	const [userAnswers, setUserAnswers] = useState([])
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -32,6 +33,9 @@ function QuestionList() {
 			) {
 				const questionData = await apiCall('get', `/api/evaluation/${evaluationId}/questions`)
 				console.log(questionData)
+				const userAnswerData = await apiCall('get', `/api/evaluation/${evaluationId}/answers`)
+				console.log('useranswer', userAnswerData)
+				setUserAnswers(userAnswerData)
 				if (!questionData.error) {
 					setQuestions(questionData)
 				}
