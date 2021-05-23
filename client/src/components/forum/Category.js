@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {apiCall} from '../services/api';
-import {capitalize} from '../utils';
+import {apiCall} from '../../services/api';
+import {capitalize} from '../../utils';
 
 const Category = () => {
   const {categoryId} = useParams();

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {WithContext as ReactTags} from 'react-tag-input';
-import {apiCall} from '../services/api';
+import {apiCall} from '../../services/api';
 
 const KeyCodes = {
   comma: 188,

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {setAuthUser} from '../store/actions/auth';
+import {setAuthUser} from '../../store/actions/auth';
 
 function AuthForm(props) {
   const history = useHistory();

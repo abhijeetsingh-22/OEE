@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {apiCall} from '../services/api';
-import {capitalize} from '../utils';
+import {apiCall} from '../../services/api';
+import {capitalize} from '../../utils';
 
 const ThreadList = () => {
   const {tag} = useParams();
   const {categoryId} = useParams();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [response, setResponse] = useState([]);
   //   var response = {};
   useEffect(() => {

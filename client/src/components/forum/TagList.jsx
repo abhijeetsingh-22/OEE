@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {apiCall} from '../services/api';
+import {apiCall} from '../../services/api';
 
 function TagList() {
   const [tags, setTags] = useState([]);
