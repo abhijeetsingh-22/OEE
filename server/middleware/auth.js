@@ -29,16 +29,21 @@ isCorrectUser = function (req, res, next) {
 function setAuthUser(req, res, next) {
 	try {
 		console.log('checking user login status 🔑🔑')
-		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1]
+		// console.log(req.cookies.authorization)
+		if (req?.headers?.authorization || req.cookies.authorization) {
+			const token =
+				req?.headers?.authorization?.split(' ')[1] || req.cookies.authorization.split(' ')[1]
+			console.log('🥱🥱 token is ', token)
 			var decoded = jwt.verify(token, process.env.TOKEN_SECRET)
 			if (decoded) {
 				req.user = decoded
+				console.log('user verified ', req.user)
 				return next()
 			}
 		}
 		return next({status: 400, message: 'you need to login to do that'})
 	} catch (err) {
+		console.log(err)
 		return next({status: 401, message: 'you need to login to do that'})
 	}
 }

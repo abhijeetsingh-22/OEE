@@ -1,9 +1,9 @@
 import axios from 'axios'
 import {toast} from 'react-toastify'
 
-export function apiCall(method, path, data) {
+export function apiCall(method, path, data, config) {
 	return new Promise((resolve, reject) => {
-		return axios[method](`${process.env.REACT_APP_API_URL}${path}`, data)
+		return axios[method](`${process.env.REACT_APP_API_URL}${path}`, data, config)
 			.then((response) => resolve(response.data))
 			.catch((err) => {
 				if (err?.response?.data?.error) {

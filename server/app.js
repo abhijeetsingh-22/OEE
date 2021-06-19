@@ -5,6 +5,7 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
+const busboy = require('connect-busboy')
 const authRoutes = require('./routes/auth')
 const {setAuthUser} = require('./middleware/auth')
 const categoryRoutes = require('./routes/category')
@@ -17,6 +18,8 @@ const runSubmission = require('./handlers/oj')
 const {runTestcasesCb, submitCb} = require('./handlers/evaluation')
 const evaluationRoutes = require('./routes/evaluation')
 const quizRoutes = require('./routes/quiz')
+const fileRoutes = require('./routes/file')
+const folderRoutes = require('./routes/folder')
 
 const app = express()
 
@@ -27,6 +30,11 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+	busboy({
+		highWaterMark: 2 * 1024 * 1024,
+	})
+)
 
 app.get('/test', (req, res) => {
 	res.send('welcome to oee server')
@@ -43,6 +51,8 @@ app.use('/api/forum/tags', TagRoutes)
 app.use('/api/oj', ojRoutes)
 app.use('/api/evaluation', evaluationRoutes)
 app.use('/api/quiz', quizRoutes)
+app.use('/api/drive/file', fileRoutes)
+app.use('/api/drive/folder', folderRoutes)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404))
