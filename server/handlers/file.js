@@ -140,7 +140,7 @@ const deleteFile = async (req, res, next) => {
 	try {
 		console.log('⭐⭐', req.params)
 		const file = await db.File.findById(req.params.fileId)
-		if (!file) return res.statu(404).json({error: {message: 'File not found'}})
+		if (!file) return res.status(404).json({error: {message: 'File not found'}})
 		if (file.metadata.thumbnailID) {
 			const thumbnail = await db.Thumbnail.findById(file.metadata.thumbnailID)
 			const thumbnailPath = thumbnail.path

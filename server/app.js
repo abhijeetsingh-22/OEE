@@ -51,8 +51,8 @@ app.use('/api/forum/tags', TagRoutes)
 app.use('/api/oj', ojRoutes)
 app.use('/api/evaluation', evaluationRoutes)
 app.use('/api/quiz', quizRoutes)
-app.use('/api/drive/file', fileRoutes)
-app.use('/api/drive/folder', folderRoutes)
+app.use('/api/drive/files', fileRoutes)
+app.use('/api/drive/folders', folderRoutes)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404))

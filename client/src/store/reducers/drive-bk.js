@@ -29,6 +29,24 @@ const driveReducer = (state = defaultState, action) => {
 
 			return {...state, files: newFileList}
 		}
+		case A.SET_FOLDERS:
+			return {...state, folders: action.folders}
+		case A.ADD_FOLDER: {
+			return {...state, folders: [...state.folders, action.folder]}
+		}
+		case A.EDIT_FOLDER: {
+			const newFolderList = state.folders.map((folder) => {
+				if (folder._id == action.id) {
+					return {...folder, ...action.folder}
+				}
+				return folder
+			})
+			return {...state, folders: newFolderList}
+		}
+		case A.DELETE_FOLDER: {
+			const newFolderList = state.folders.filter((folder) => folder._id !== action.id)
+			return {...state, folders: newFolderList}
+		}
 		case A.ADD_UPLOAD: {
 			return {...state, upload: [...state.upload, action.upload]}
 		}

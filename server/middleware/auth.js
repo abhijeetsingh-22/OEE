@@ -29,7 +29,7 @@ isCorrectUser = function (req, res, next) {
 function setAuthUser(req, res, next) {
 	try {
 		console.log('checking user login status 🔑🔑')
-		// console.log(req.cookies.authorization)
+		console.log(req.cookies)
 		if (req?.headers?.authorization || req.cookies.authorization) {
 			const token =
 				req?.headers?.authorization?.split(' ')[1] || req.cookies.authorization.split(' ')[1]

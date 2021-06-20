@@ -13,7 +13,7 @@ function FileItem(props) {
 	const [contextSelected, setContextSelected] = useState(false)
 	const getThumbnail = async () => {
 		const thumbnailID = props.metadata.thumbnailID
-		const url = `/api/drive/file/thumbnail/${thumbnailID}`
+		const url = `/api/drive/files/thumbnail/${thumbnailID}`
 		const config = {responseType: 'arraybuffer'}
 		apiCall('get', url, config).then((res) => {
 			const imgFile = new Blob([res])
@@ -91,13 +91,15 @@ function FileItem(props) {
 	const handleFileDelete = () => {
 		showDeleteModal()
 	}
+	console.log('the prop ', props.selected, props._id)
 	return (
 		thumbnail && (
 			<div
 				onContextMenu={selectContext}
-				className='drive_item'
+				className={props._id !== props.selected ? 'file_item' : 'file_item file_active'}
 				// className='d-flex flex-column justify-content-center align-items-start m-2 '
 				// style={{position: 'relative'}}
+				onClick={() => props.fileClick(props._id, props)}
 			>
 				<div className='settings_wrapper' onClick={props.clickStopPropagation}>
 					<ContextMenu

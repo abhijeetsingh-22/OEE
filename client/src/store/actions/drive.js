@@ -15,23 +15,49 @@ const editFile = (id, file) => {
 const deleteFile = (id) => {
 	return {type: A.DELETE_FILE, id}
 }
+export const addFolder = (folder) => {
+	return {type: A.ADD_FOLDER, folder}
+}
 export const setFolders = (folders) => {
 	return {type: A.SET_FOLDERS, folders}
+}
+export const editFolder = (id, folder) => {
+	return {type: A.EDIT_FOLDER, id, folder}
+}
+export const deleteFolder = (id) => {
+	return {type: A.DELETE_FOLDER, id}
 }
 const addUpload = (upload) => {
 	return {type: A.ADD_UPLOAD, upload}
 }
 const editUpload = (id, progress, completed = false) => {
-	return {type: A.EDIT_UPLOAD, progress, completed}
+	return {type: A.EDIT_UPLOAD, id, progress, completed}
 }
 const cancelUpload = (id) => {
 	return {type: A.CANCE_UPLOAD, id}
 }
-
+export const setSelectedItem = (selectedItem) => {
+	return {type: A.SET_SELECTED_ITEM, selectedItem}
+}
+export const setLastSelectedTime = (lastSelected) => {
+	return {type: A.SET_LAST_SELECTED, lastSelected}
+}
+export const setParent = (parent) => {
+	return {type: A.SET_PARENT, parent}
+}
+export const setParentList = (parentList, parentNameList) => {
+	return {type: A.SET_PARENT_LIST, parentList, parentNameList}
+}
+export const addParentList = (parent) => {
+	return {type: A.ADD_PARENT_LIST, parent}
+}
+export const resetParentList = () => {
+	return {type: A.RESET_PARENT_LIST}
+}
 export const setAllDriveItems = (parent = '/', search = '', folderSearch = false) => {
 	return (dispatch) => {
-		const fileURL = `/api/drive/file/list?parent=${parent}`
-		const folderURL = `/api/drive/folder/list?parent=${parent}`
+		const fileURL = `/api/drive/files/list?parent=${parent}`
+		const folderURL = `/api/drive/folders/list?parent=${parent}`
 		dispatch(setFiles([]))
 		dispatch(setFolders([]))
 		// dispatch(setLoading(true))
@@ -42,6 +68,7 @@ export const setAllDriveItems = (parent = '/', search = '', folderSearch = false
 				const folderList = res[1]
 				dispatch(setFiles(fileList))
 				dispatch(setFolders(folderList))
+
 				// dispatch(setQuickFiles(quickItemList))
 				// dispatch(setLoading(false))
 			})
@@ -54,7 +81,7 @@ export const setAllDriveItems = (parent = '/', search = '', folderSearch = false
 export const startFileRename = (id, title) => {
 	return (dispatch) => {
 		const data = {id, title}
-		apiCall('patch', '/api/drive/file/rename', data)
+		apiCall('patch', '/api/drive/files/rename', data)
 			.then((res) => {
 				console.log('rename done updating state', res)
 				dispatch(editFile(id, {filename: title}))
@@ -67,7 +94,7 @@ export const startFileRename = (id, title) => {
 
 export const startFileDelete = (id) => {
 	return (dispatch) => {
-		apiCall('delete', `/api/drive/file/${id}`)
+		apiCall('delete', `/api/drive/files/${id}`)
 			.then((res) => {
 				dispatch(deleteFile(id))
 			})
@@ -125,7 +152,7 @@ export const startFileUpload = (uploadInput, parent, parentList) => {
 			data.append('currentID', currentID)
 			data.append('size', currentFile.size)
 			data.append('file', currentFile)
-			const url = '/api/drive/file/upload'
+			const url = '/api/drive/files/upload'
 
 			apiCall('post', url, data, config)
 				.then(function (response) {
@@ -147,5 +174,69 @@ export const startFileUpload = (uploadInput, parent, parentList) => {
 					dispatch(cancelUpload(currentID))
 				})
 		}
+	}
+}
+
+export const startAddFolder = (name, parent, parentList) => {
+	return (dispatch) => {
+		const URL = '/api/drive/folders/upload'
+		const data = {name, parent, parentList}
+		apiCall('post', URL, data).then((res) => {
+			const folder = res
+			dispatch(addFolder(folder))
+		})
+	}
+}
+
+export const startFolderRename = (id, title, parent) => {
+	return (dispatch) => {
+		const data = {id, title}
+		const URL = '/api/drive/folders/rename'
+		apiCall('patch', URL, data)
+			.then((res) => {
+				dispatch(editFolder(id, {name: title}))
+			})
+			.catch((err) => {
+				console.log('error renaming', err)
+			})
+	}
+}
+
+export const startFolderDelete = (id, parent, parentList) => {
+	return (dispatch) => {
+		const data = {id, parentList, parent}
+		const URL = '/api/drive/folders/delete'
+		apiCall('delete', URL, {data})
+			.then((res) => {
+				dispatch(deleteFolder(id))
+			})
+			.catch((err) => {
+				console.log('error occured in deleting folder', err)
+			})
+	}
+}
+
+export const startSetSelectedItem = (id, file) => {
+	return (dispatch) => {
+		const currentDate = Date.now()
+		dispatch(setLastSelectedTime(currentDate))
+		dispatch(setSelectedItem({id}))
+		// axios.get(`/folder-service/info/${id}`).then((results) => {
+
+		// 	const {name, 0: size, createdAt: date, parentName: location, _id: id, drive, personalFolder: personalFile} = results.data;
+
+		// 	dispatch(setSelectedItem({name, size, date, file, location, data: results.data, id, drive, personalFile}))
+
+		// }).catch((err) => {
+		// 	console.log(err)
+		// })
+	}
+}
+
+export const startSetParentList = (id) => {
+	return (dispatch) => {
+		const parentList = ['/', id]
+		const parentNameList = ['Home', 'hello']
+		dispatch(setParentList(parentList, parentNameList))
 	}
 }

@@ -10,8 +10,11 @@ import Sidebar from './common/Sidebar'
 import {setCurrentUser, setToken} from '../store/actions/auth'
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faCaretDown, faFolder} from '@fortawesome/free-solid-svg-icons'
 const store = configureStore()
 toast.configure({position: toast.POSITION.BOTTOM_RIGHT, limit: 4})
+library.add(faFolder, faCaretDown)
 function App() {
 	if (localStorage.authToken) {
 		setToken(localStorage.authToken)
