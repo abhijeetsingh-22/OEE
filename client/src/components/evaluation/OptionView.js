@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 import {toast} from 'react-toastify'
 import {apiCall} from '../../services/api'
-import {socket} from '../../services/socket'
+// import {socket} from '../../services/socket'
 
-function OptionView({question, options}) {
-	const [selectedOption, setSelectedOption] = useState(null)
-	const [previousSelected, setPreviousSelected] = useState(null)
+function OptionView({question, options, answers}) {
+	// console.log('useranswer is', answers.answer[0])
+	const [selectedOption, setSelectedOption] = useState(answers?.answer[0])
+	const [previousSelected, setPreviousSelected] = useState(answers?.answer[0])
 	var optionsView = options.map((option, idx) => {
 		return (
 			<div>
@@ -25,7 +26,7 @@ function OptionView({question, options}) {
 									setPreviousSelected(option.id)
 								})
 								.catch((err) => {
-									if (!err.message) toast.error('Unable to connect to server, Answer not saved')
+									if (!err?.message) toast.error('Unable to connect to server, Answer not saved')
 
 									setSelectedOption(previousSelected)
 								})

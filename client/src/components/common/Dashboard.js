@@ -9,6 +9,8 @@ import Editor from '../oj/Editor'
 import Evaluation from '../evaluation'
 import PlayGround from '../oj'
 import Quiz from '../evaluation/quiz'
+import ResourcesDashboard from '../drive'
+import Meeting from '../meeting'
 const Dashboard = () => {
 	return (
 		<>
@@ -25,15 +27,17 @@ const Dashboard = () => {
 							<Route path='/forum' component={Forum} />
 							<Route path='/evaluations' render={() => <Evaluation type='Evaluation' />} />
 							<Route path='/quiz' render={() => <Quiz type='Quiz' />} />
+							<Route path={['/drive/folders/:folderID', '/drive']} component={ResourcesDashboard} />
+							<Route path='/meetings' component={Meeting} />
 						</Switch>
-						<button
+						{/* <button
 							onClick={(e) => {
 								console.log('emitting')
 								// socket.emit('answer', 'good answer')
 							}}
 						>
 							Emit event
-						</button>
+						</button> */}
 					</div>
 				</div>
 			</div>

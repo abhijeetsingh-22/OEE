@@ -7,6 +7,7 @@ import AddEvaluation from '../AddEvaluation'
 import EvaluationsList from '../EvaluationsList'
 import QuestionList from '../QuestionList'
 import AddQuizQuestion from './AddQuizQuestion'
+import QuizResultTable from './QuizResultTable'
 import UpdateQuizQuestion from './UpdateQuizQuestion'
 
 function Quiz({type}) {
@@ -46,8 +47,8 @@ function Quiz({type}) {
 					exact
 					path={`${path}/:evaluationId/questions/:questionId/submissions`}
 					component={SubmissionResultList}
-				/>
-				<Route path={`${path}/:evaluationId/submissions`} component={EvaluationResultList} /> */}
+				/>*/}
+				<Route path={`${path}/:evaluationId/submissions`} component={QuizResultTable} />
 			</Switch>
 			{/* <EvaluationsList/> */}
 		</div>
