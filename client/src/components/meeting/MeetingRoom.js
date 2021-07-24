@@ -12,7 +12,7 @@ var activeSreen = ''
 function MeetingRoom() {
 	const [myPeer, setMyPeer] = useState(
 		new Peer(undefined, {
-			host: process.env.REACT_APP_API_URL,
+			host: process.env.REACT_APP_PEERJS_URL,
 			path: '/peerjs',
 		})
 	)
