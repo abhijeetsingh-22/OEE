@@ -204,6 +204,28 @@ function Sidebar() {
 							</NavLink>
 						</div>
 					</li>
+					<li className='nav-item '>
+						<div className='d-flex align-items-center justify-content-between me-3 '>
+							<NavLink to='/meetings' className='nav-link pb-0'>
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									width='24'
+									height='24'
+									viewBox='0 0 24 24'
+									fill='none'
+									stroke='currentColor'
+									stroke-width='2'
+									stroke-linecap='round'
+									stroke-linejoin='round'
+									className='feather feather-file'
+								>
+									<path d='M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z'></path>
+									<polyline points='13 2 13 9 20 9'></polyline>
+								</svg>
+								Meetings
+							</NavLink>
+						</div>
+					</li>
 				</ul>
 
 				<h6 className='sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted'>

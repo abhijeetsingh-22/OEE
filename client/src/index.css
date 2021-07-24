@@ -661,3 +661,20 @@ span.fa:focus {
 	min-width: 28px;
 	display: inline-block;
 }
+
+/* ================== Video Chat ====================== */
+
+/* #video-grid {
+	display: flex;
+	justify-content: center;
+} */
+.video {
+	height: 300px;
+	width: 400px;
+	object-fit: cover;
+}
+.video-sm {
+	height: 150px;
+	width: 200px;
+	object-fit: cover;
+}

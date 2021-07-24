@@ -29,7 +29,9 @@ isCorrectUser = function (req, res, next) {
 function setAuthUser(req, res, next) {
 	try {
 		console.log('checking user login status 🔑🔑')
-		console.log(req.cookies)
+		// console.log(req.path.split('/'))
+		if (req.path.split('/')[1] === 'peerjs') return next()
+
 		if (req?.headers?.authorization || req.cookies.authorization) {
 			const token =
 				req?.headers?.authorization?.split(' ')[1] || req.cookies.authorization.split(' ')[1]

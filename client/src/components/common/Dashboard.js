@@ -10,6 +10,7 @@ import Evaluation from '../evaluation'
 import PlayGround from '../oj'
 import Quiz from '../evaluation/quiz'
 import ResourcesDashboard from '../drive'
+import Meeting from '../meeting'
 const Dashboard = () => {
 	return (
 		<>
@@ -27,6 +28,7 @@ const Dashboard = () => {
 							<Route path='/evaluations' render={() => <Evaluation type='Evaluation' />} />
 							<Route path='/quiz' render={() => <Quiz type='Quiz' />} />
 							<Route path={['/drive/folders/:folderID', '/drive']} component={ResourcesDashboard} />
+							<Route path='/meetings' component={Meeting} />
 						</Switch>
 						{/* <button
 							onClick={(e) => {

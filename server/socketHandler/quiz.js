@@ -12,4 +12,5 @@ module.exports = (io, socket) => {
 		cb({status: 'ok'})
 	}
 	socket.on('answer', submitAnswer)
+	// socket.on('join-room', () => console.log('join-room'))
 }

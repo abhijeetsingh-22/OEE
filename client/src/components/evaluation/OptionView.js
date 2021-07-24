@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {toast} from 'react-toastify'
 import {apiCall} from '../../services/api'
-import {socket} from '../../services/socket'
+// import {socket} from '../../services/socket'
 
 function OptionView({question, options, answers}) {
 	// console.log('useranswer is', answers.answer[0])

@@ -4,8 +4,12 @@
  * Module dependencies.
  */
 var app = require('../app')
+// app.get('/hello', (req, res) => res.send('hello'))
 var debug = require('debug')('server:server')
 var http = require('http')
+const createError = require('http-errors')
+const {ExpressPeerServer} = require('peer')
+const {v4: uuid} = require('uuid')
 
 /**
  * Get port from environment and store in Express.
@@ -17,9 +21,7 @@ app.set('port', port)
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app)
-
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -105,4 +107,28 @@ io.use(async (socket, next) => {
 			return next(new Error('You are not allowed to do that !!'))
 		}
 	})
+})
+// ================== PEERJS CONFIG ========================//
+const peerServer = ExpressPeerServer(server, {debug: true, path: '/', cors: '*'})
+
+app.use('/peerjs', peerServer)
+app.get('/hello', (req, res) => res.send('hi'))
+
+// server.listen(port, () => console.log('listening on port ', port))
+// module.exports = {peerServer}
+// =================== Express rotes error handling=========================//
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+	next(createError(404))
+})
+// error handler
+app.use(function (err, req, res, next) {
+	// set locals, only providing error in development
+	res.locals.message = err.message
+	res.locals.error = req.app.get('env') === 'development' ? err : {}
+
+	// returns the error message
+	res
+		.status(err.status || 500)
+		.json({error: {message: err.message || 'Oops!! Something went wrong try again'}})
 })
