@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Moment from 'react-moment'
 import {useSelector} from 'react-redux'
 import {Link, useRouteMatch} from 'react-router-dom'
+import {toast} from 'react-toastify'
 import {apiCall} from '../../services/api'
 import {getCurrentUser} from '../../store/selectors/user'
 import Spinner from '../common/Spinner'
@@ -26,9 +27,25 @@ function MeetingsList() {
 			<div className='card'>
 				{/* <img src="..." className="card-img-top" alt="..."> */}
 				<div className='card-body'>
-					<div className='row'>
-						<div className='col'>
-							<Link to={`${url}/${meeting.id}`} className='text-decoration-none' target='_blank'>
+					<div className=' d-flex justify-content-between'>
+						<div
+							className=''
+							onClick={(e) => {
+								if (new Date(meeting.endTime) < new Date()) {
+									toast.info('Meeting has ended')
+									e.preventDefault()
+								} else if (new Date(meeting.startTime) > new Date()) {
+									toast.info('Meeting not started')
+									e.preventDefault()
+								}
+								console.log()
+							}}
+						>
+							<Link
+								to={`${url}/join/${meeting.id}`}
+								className='text-decoration-none'
+								target='_blank'
+							>
 								<h5 className='card-title mb-0'>{meeting.title}</h5>
 							</Link>
 							{/* <div className='text-muted mb-2'>By {capitalize(thread.user.name)}</div> */}
@@ -48,23 +65,32 @@ function MeetingsList() {
 							<div></div>
 						</div>
 						{currentUser.user.id === meeting.user && (
-							<div className='col-1'>
+							<div className='col-3 col-md-3 col-xl-2 col-xxl-1 '>
+								<div className='d-flex mb-2'>
+									<Link
+										to={`${url}/${meeting.id}/edit`}
+										className='btn btn-sm btn-warning w-100 me-2'
+									>
+										Edit
+									</Link>
+									<button
+										onClick={async (e) => {
+											e.preventDefault()
+											await apiCall('delete', `/api/meetings/${meeting.id}`)
+											window.location.reload()
+										}}
+										className='btn btn-sm btn-danger w-100'
+									>
+										Delete
+									</button>
+								</div>
+
 								<Link
-									to={`${url}/${meeting.id}/edit`}
-									className='btn btn-sm btn-warning w-100 mb-2'
+									to={`${path}/${meeting.id}/attendance`}
+									className='btn btn-sm btn-primary w-100'
 								>
-									Edit
+									Attendance
 								</Link>
-								<button
-									onClick={async (e) => {
-										e.preventDefault()
-										await apiCall('delete', `/api/meetings/${meeting.id}`)
-										window.location.reload()
-									}}
-									className='btn btn-sm btn-danger w-100'
-								>
-									Delete
-								</button>
 							</div>
 						)}
 					</div>

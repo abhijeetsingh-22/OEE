@@ -6,6 +6,7 @@ import ProtectedRoute from '../../hocs/ProtectedRoute'
 import Dashboard from './Dashboard'
 import Meeting from '../meeting'
 import MeetingRoom from '../meeting/MeetingRoom'
+import MeetingRoomContainer from '../meeting/MeetingRoomContainer'
 
 function Main(props) {
 	const currentUser = useSelector((state) => state.currentUser)
@@ -15,9 +16,10 @@ function Main(props) {
 		<Switch>
 			<Route exact path='/login' component={AuthForm} />
 			<ProtectedRoute
-				path='/meetings/:meetingId'
+				exact
+				path='/meetings/join/:meetingId'
 				currentUser={currentUser}
-				component={MeetingRoom}
+				component={MeetingRoomContainer}
 			/>
 			<ProtectedRoute path='/' currentUser={currentUser} component={Dashboard} />
 		</Switch>
