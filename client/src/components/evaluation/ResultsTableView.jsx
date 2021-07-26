@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {useHistory, useParams} from 'react-router'
 import {CSVLink} from 'react-csv'
 
-function ResultsTableView({tableData, maxMarks}) {
+function ResultsTableView({tableData, maxMarks, qList}) {
 	const userResultView = tableData.map((data) => {
 		var userScores = data.scores.map((score) => {
 			return <td>{score}</td>
@@ -16,9 +16,11 @@ function ResultsTableView({tableData, maxMarks}) {
 		)
 	})
 	console.log('table data is ', tableData)
-	const quest = tableData[0].scores.map((s, idx) => {
-		return {label: `Q.${idx + 1}`, key: `q${idx + 1}`}
-	})
+	const quest =
+		tableData[0]?.scores?.map((s, idx) => {
+			return {label: `Q.${idx + 1}`, key: `q${idx + 1}`}
+		}) || qList
+	console.log('helo', quest, quest)
 
 	const headers = [
 		{label: 'User', key: 'username'},
@@ -45,7 +47,7 @@ function ResultsTableView({tableData, maxMarks}) {
 					<thead className='table-dark'>
 						<tr>
 							<th scope='col'>User</th>
-							{tableData[0].scores.map((q, idx) => (
+							{tableData[0]?.scores?.map((q, idx) => (
 								<th scope='col'>Q.{idx + 1}</th>
 							))}
 							<th>Total ({maxMarks})</th>

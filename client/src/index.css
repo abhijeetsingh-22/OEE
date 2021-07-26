@@ -87,7 +87,10 @@ a.nolinkstyle:hover {
 	color: black;
 	background-color: rgb(237, 237, 245);
 }
-
+.icon-container {
+	min-width: 30px;
+	min-height: 20px;
+}
 /*
  * Navbar
  */

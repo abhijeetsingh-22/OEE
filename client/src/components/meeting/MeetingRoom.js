@@ -3,9 +3,11 @@ import Peer from 'peerjs'
 import './style.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {socket} from '../../services/socket'
-import {Link, Prompt, useParams} from 'react-router-dom'
+import {Link, Prompt, useHistory, useParams} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import {getCurrentUser} from '../../store/selectors/user'
+import {apiCall} from '../../services/api'
+import {toast} from 'react-toastify'
 var peers = {}
 var myID = ''
 var activeSreen = ''
@@ -14,6 +16,7 @@ function MeetingRoom() {
 		new Peer(undefined, {
 			host: process.env.REACT_APP_PEERJS_URL,
 			path: '/peerjs',
+			port: window.location.protocol == 'https' ? 443 : 3000,
 		})
 	)
 	var myVideoStream = useRef(null)
@@ -33,44 +36,48 @@ function MeetingRoom() {
 	const [participants, setParticipants] = useState([])
 
 	useEffect(() => {
+		if (true) {
+			socket.connect()
+			socket.on('message', (message, userId, username) => {
+				// const container = document.querySelector('.main__chat__box')
+				console.log(messages, message)
+				setMessages((prev) => [...prev, {message, userId, username}])
+
+				// container.scrollTop = container.scrollHeight
+			})
+
+			socket.on('participants', (users) => {
+				// const container = document.querySelector(".main__users__box");
+				// const lists = document.getElementById('users')
+				setParticipants(users)
+			})
+			socket.on('user-disconnected', (userID, username) => {
+				peers[userID]?.close()
+				systemMessage(username)
+			})
+			myPeer.on('open', (id) => {
+				console.log('joining')
+				socket.emit('join-room', meetingId, id, currentUser.user.name)
+				myID = id
+			})
+		}
+	}, [])
+	useEffect(() => {
 		console.log('h', !myVideoStream.current)
 		if (videoGridRef.current && !myVideoStream.current) {
 			init()
 		}
 		return () => {
-			myVideoStream.current.getTracks().forEach((track) => track.stop())
-			myVideoStream.current = null
-			myPeer.disconnect()
+			if (myVideoStream.current) {
+				myVideoStream.current.getTracks().forEach((track) => track.stop())
+				myVideoStream.current = null
+			}
+			if (!myPeer.disconnected) myPeer.disconnect()
 			// socket.emit('disconnect')
-			socket.disconnect()
+			if (!socket.disconnected) socket.disconnect()
 			setMyPeer(null)
 		}
 	}, [videoGridRef])
-	useEffect(() => {
-		socket.connect()
-		socket.on('message', (message, userId, username) => {
-			// const container = document.querySelector('.main__chat__box')
-			console.log(messages, message)
-			setMessages((prev) => [...prev, {message, userId, username}])
-
-			// container.scrollTop = container.scrollHeight
-		})
-
-		socket.on('participants', (users) => {
-			// const container = document.querySelector(".main__users__box");
-			// const lists = document.getElementById('users')
-			setParticipants(users)
-		})
-		socket.on('user-disconnected', (userID, username) => {
-			peers[userID]?.close()
-			systemMessage(username)
-		})
-		myPeer.on('open', (id) => {
-			console.log('joining')
-			socket.emit('join-room', meetingId, id, currentUser.user.name)
-			myID = id
-		})
-	}, [])
 	const participantsView = participants.map((user) => {
 		return (
 			<li className='user'>
@@ -363,7 +370,7 @@ function MeetingRoom() {
 							</div>
 						</div>
 						<div className='main__controls__block'>
-							<Link to='/'>
+							<Link to='/meetings'>
 								<div className='main__controls__button leave-btn'>
 									<span>Leave Meeting</span>
 								</div>

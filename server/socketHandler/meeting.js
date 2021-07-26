@@ -6,6 +6,12 @@ module.exports = (io, socket) => {
 		console.log('joining room', roomID)
 		const meeting = await db.Meeting.findById(roomID)
 		if (!meeting) return
+		const joiningTime = new Date()
+		const attendance = await db.UserAttendance.update(
+			{user: socket.data.user.id, meeting: roomID},
+			{joiningTime},
+			{upsert: true}
+		)
 		console.log(users)
 		console.log('=========')
 		// const {id: userID, name: username} = socket.data.user
@@ -52,7 +58,16 @@ module.exports = (io, socket) => {
 			io.in(roomID).emit('participants', users[roomID])
 		})
 
-		socket.on('disconnect', () => {
+		socket.on('disconnect', async () => {
+			const attendance = await db.UserAttendance.findOne({
+				user: socket.data.user.id,
+				meeting: roomID,
+			})
+			const timeNow = new Date()
+			const minutes = !!attendance.joiningTime
+				? attendance.duration + timeNow.getMinutes() - attendance.joiningTime.getMinutes()
+				: attendance.duration
+			await attendance.update({duration: minutes, joiningTime: null})
 			// socket.to(roomID).broadcast.emit('user-disconnected', userID, username)
 			console.log('user disconnected')
 			socket.to(roomID).emit('user-disconnected', userID, username)

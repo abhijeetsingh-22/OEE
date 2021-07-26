@@ -61,6 +61,9 @@ function QuizResultTable() {
 		return res
 	})
 	console.log('table data is ', tableData)
+	const qList = evaluation.map((question, idx) => {
+		return {label: `Q.${idx + 1}`, key: `q${idx + 1}`}
+	})
 	// evaluation.map(question=>{
 	// 	var userSub=submissions.map(sub=>{
 	// 		return sub
@@ -76,7 +79,7 @@ function QuizResultTable() {
 	// </div>
 	return (
 		<div>
-			<ResultsTableView tableData={tableData} maxMarks={evaluation.length} />
+			<ResultsTableView tableData={tableData} maxMarks={evaluation.length} qList={qList} />
 		</div>
 	)
 }

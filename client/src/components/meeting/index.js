@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import {Route, Switch, useRouteMatch} from 'react-router-dom'
 import ProtectedRoute from '../../hocs/ProtectedRoute'
 import {getCurrentUser} from '../../store/selectors/user'
+import MeetingAttendance from './MeetingAttendance'
 import MeetingForm from './MeetingForm'
 import MeetingRoom from './MeetingRoom'
 import MeetingsList from './MeetingsList'
@@ -14,7 +15,7 @@ function Meeting() {
 	return (
 		<div>
 			<Switch>
-				<Route exact path={`${path}/`} component={MeetingsList} />
+				<Route exact path={`${path}`} component={MeetingsList} />
 				{/* <Route
 					exact
 					path='/new'
@@ -37,6 +38,14 @@ function Meeting() {
 					path={`${path}/:meetingId/edit`}
 					componentProps={{action: 'Update'}}
 					component={MeetingForm}
+				/>
+				<ProtectedRoute
+					currentUser={currentUser}
+					role={'staff'}
+					exact
+					path={`${path}/:meetingId/attendance`}
+					// componentProps={{action: 'Update'}}
+					component={MeetingAttendance}
 				/>
 				{/* <Route path={`${path}/:meetingId`} component={MeetingRoom} /> */}
 			</Switch>

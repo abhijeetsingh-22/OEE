@@ -22,7 +22,16 @@ import {
 	faVideo,
 	faMicrophoneSlash,
 	faVideoSlash,
+	faTag,
+	faCode,
+	faQuestion,
+	faUsers,
+	faLaptopCode,
+	faPlusCircle,
+	faHome,
+	// faComment,
 } from '@fortawesome/free-solid-svg-icons'
+import {faComment, faHdd, faFolder as farFolder} from '@fortawesome/free-regular-svg-icons'
 const store = configureStore()
 toast.configure({position: toast.POSITION.BOTTOM_RIGHT, limit: 4})
 library.add(
@@ -35,7 +44,17 @@ library.add(
 	faUserPlus,
 	faPaperPlane,
 	faMicrophoneSlash,
-	faVideoSlash
+	faVideoSlash,
+	faComment,
+	faHdd,
+	faTag,
+	farFolder,
+	faHome,
+	faQuestion,
+	faCode,
+	faPlusCircle,
+	faLaptopCode,
+	faUsers
 )
 function App() {
 	if (localStorage.authToken) {

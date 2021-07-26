@@ -62,4 +62,27 @@ const getAllMeetings = async (req, res, next) => {
 		next({status: 400, message: 'Oops !! Something went wrong.'})
 	}
 }
-module.exports = {createMeeting, updateMeeting, deleteMeeting, getMeeting, getAllMeetings}
+const getAllAttendance = async (req, res, next) => {
+	try {
+		const foundAttendance = await db.UserAttendance.find({meeting: req.params.meetingId}).populate(
+			'user',
+			'name email role eno empid'
+		)
+		if (!foundAttendance)
+			return res.status(404).json({error: {message: 'No attendace found for meeting '}})
+		console.log('found ', foundAttendance)
+		return res.status(200).json(foundAttendance)
+	} catch (err) {
+		console.error(err)
+		next({status: 400, message: 'Oops !! Something went wrong.'})
+	}
+}
+
+module.exports = {
+	createMeeting,
+	updateMeeting,
+	deleteMeeting,
+	getMeeting,
+	getAllMeetings,
+	getAllAttendance,
+}
