@@ -16,7 +16,7 @@ function MeetingRoom() {
 		new Peer(undefined, {
 			host: process.env.REACT_APP_PEERJS_URL,
 			path: '/peerjs',
-			port: window.location.protocol == 'https' ? 443 : 3000,
+			port: window.location.protocol == 'https:' ? 443 : 3000,
 		})
 	)
 	var myVideoStream = useRef(null)
