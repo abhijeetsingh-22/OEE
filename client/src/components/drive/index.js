@@ -26,6 +26,7 @@ import ViewDriveContent from './ViewDriveContent'
 import {useHistory, useLocation, useParams} from 'react-router-dom'
 import Swal from 'sweetalert2'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {getCurrentUser} from '../../store/selectors/user'
 const http = require('http')
 const https = require('https')
 
@@ -43,6 +44,7 @@ function ResourcesDashboard() {
 	const parentNameList = useSelector(getParentNameList)
 	const {lastSelected, id: selectedID} = useSelector(getSelectedItem)
 	const folderName = useSelector(getFolderName)
+	const currentUser = useSelector(getCurrentUser)
 	const [showDropdown, setShowDropdown] = useState(false)
 	useEffect(() => {
 		console.log('fetching drive data')
@@ -135,41 +137,43 @@ function ResourcesDashboard() {
 	return (
 		<div>
 			<h2>{folderName || 'HOME'}</h2>
-			<div className='add_item_dropdown_wrapper'>
-				<button className='add_item_dropdown_btn ' onClick={toggleDropdown}>
-					ADD NEW <FontAwesomeIcon icon='caret-down' />{' '}
-				</button>
-				<div
-					className='add_item_dropdown'
-					style={showDropdown ? {display: 'block'} : {display: 'none'}}
-				>
-					<ul>
-						<li>
-							<label>
-								<span>
-									<img src='/assets/img/uploadicon.svg' />
-								</span>
-								Upload Files
-								<input
-									ref={uploadInput}
-									type='file'
-									multiple={true}
-									onChange={handleUpload}
-									style={{display: 'none'}}
-								/>
-							</label>
-						</li>
-						<li>
-							<a onClick={createFolder}>
-								<span>
-									<img src='/assets/img/foldericon.svg' alt='folder' />
-								</span>
-								Create Folder
-							</a>
-						</li>
-					</ul>
+			{currentUser.user.role == 'staff' ? (
+				<div className='add_item_dropdown_wrapper'>
+					<button className='add_item_dropdown_btn ' onClick={toggleDropdown}>
+						ADD NEW <FontAwesomeIcon icon='caret-down' />{' '}
+					</button>
+					<div
+						className='add_item_dropdown'
+						style={showDropdown ? {display: 'block'} : {display: 'none'}}
+					>
+						<ul>
+							<li>
+								<label>
+									<span>
+										<img src='/assets/img/uploadicon.svg' />
+									</span>
+									Upload Files
+									<input
+										ref={uploadInput}
+										type='file'
+										multiple={true}
+										onChange={handleUpload}
+										style={{display: 'none'}}
+									/>
+								</label>
+							</li>
+							<li>
+								<a onClick={createFolder}>
+									<span>
+										<img src='/assets/img/foldericon.svg' alt='folder' />
+									</span>
+									Create Folder
+								</a>
+							</li>
+						</ul>
+					</div>
 				</div>
-			</div>
+			) : null}
 
 			<ViewDriveContent
 				downloadFile={downloadFile}
