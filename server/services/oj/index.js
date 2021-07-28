@@ -50,6 +50,7 @@ const submitAnswer = ({source, lang, testcases}) => {
 	})
 }
 const getLangs = () => {
+	console.log('fetching', uri('/langs'))
 	return rp({
 		uri: uri('/langs'),
 		json: true,
