@@ -1,0 +1,54 @@
+version: '3'
+services:
+  rabbitmq:
+    # image: rabbitmq:3-management-alpine
+    image: devabhijeet/rabbitmq-extended
+    # network_mode: host
+    # volumes:
+    #   - ./rabbitmq/rabbit.conf:/etc/rabbitmq/rabbitmq.config
+    # environment:
+    #   - RABBITMQ_DEFAULT_USER=abhijeet
+    #   - RABBITMQ_DEFAULT_PASS=asingh
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:15672']
+      interval: 3s
+      timeout: 10s
+      retries: 50
+  taskmaster:
+    image: devabhijeet/oj-taskmaster
+    # network_mode: host
+    volumes:
+      - '/tmp/runbox:/tmp/runbox'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  api:
+    image: devabhijeet/oj-api
+    depends_on:
+      taskmaster:
+        condition: service_started
+    # extra_hosts:
+    #   - 'host.docker.internal:host-gateway'
+    # network_mode: host
+    # networks:
+    #   - 'default'
+    #   - 'host_net'
+    restart: on-failure
+    ports:
+      - '3008:3008'
+      - '3000:3000'
+
+    env_file:
+      - .env
+
+  worker-c:
+    image: devabhijeet/oj-worker-c
+  worker-cpp:
+    image: devabhijeet/oj-worker-cpp
