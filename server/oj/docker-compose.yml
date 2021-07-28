@@ -1,9 +1,7 @@
 version: '3'
 services:
   rabbitmq:
-    # image: rabbitmq:3-management-alpine
     image: devabhijeet/rabbitmq-extended
-    # network_mode: host
     # volumes:
     #   - ./rabbitmq/rabbit.conf:/etc/rabbitmq/rabbitmq.config
     # environment:
@@ -19,7 +17,6 @@ services:
       retries: 50
   taskmaster:
     image: devabhijeet/oj-taskmaster
-    # network_mode: host
     volumes:
       - '/tmp/runbox:/tmp/runbox'
       - '/var/run/docker.sock:/var/run/docker.sock'
@@ -34,16 +31,9 @@ services:
     depends_on:
       taskmaster:
         condition: service_started
-    # extra_hosts:
-    #   - 'host.docker.internal:host-gateway'
-    # network_mode: host
-    # networks:
-    #   - 'default'
-    #   - 'host_net'
     restart: on-failure
     ports:
       - '3008:3008'
-      - '3000:3000'
 
     env_file:
       - .env
