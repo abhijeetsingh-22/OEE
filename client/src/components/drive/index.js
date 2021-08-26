@@ -62,7 +62,7 @@ function ResourcesDashboard() {
 		console.log('downloading file from ', fileDownloadURL)
 		const token = localStorage.getItem('authToken')
 		console.log(file)
-		document.cookie = `authorization=bearer ${token};path=/`
+		document.cookie = `authorization=bearer ${token};domain=devguy.live;path=/`
 		const link = document.createElement('a')
 		document.body.appendChild(link)
 		link.href = fileDownloadURL
