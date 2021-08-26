@@ -58,7 +58,7 @@ function ResourcesDashboard() {
 	}, [folderID])
 
 	const downloadFile = (fileID, file) => {
-		const fileDownloadURL = `http://localhost:3000/api/drive/files/download/${fileID}`
+		const fileDownloadURL = `${process.env.REACT_APP_API_URL}/api/drive/files/download/${fileID}`
 		console.log('downloading file from ', fileDownloadURL)
 		const token = localStorage.getItem('authToken')
 		console.log(file)
