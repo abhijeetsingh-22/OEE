@@ -5,8 +5,8 @@ import {setAuthUser} from '../../store/actions/auth';
 
 function AuthForm(props) {
   const history = useHistory();
-  const [email, setEmail] = useState('');
-  const [password, setPassowrd] = useState('');
+  const [email, setEmail] = useState('staff@oee.in');
+  const [password, setPassowrd] = useState('password');
   const dispatch = useDispatch();
   const error = useSelector((state) => state.error);
 
